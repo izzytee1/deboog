@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'D2-B*.html'
+      - 'index.html'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
@@ -21,13 +21,12 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Prepare exact active version
+      - name: Verify the single live HTML file
         run: |
-          set -euo pipefail
+          test -s index.html
+          grep -q DEBOOGER2000 index.html
           mkdir -p _site
-          test -s D2-B024.html
-          cp D2-B024.html _site/index.html
-          cp D2-B024.html _site/D2-B024.html
+          cp index.html _site/index.html
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
