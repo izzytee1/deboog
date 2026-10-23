@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-  <title>DEBOOGER2000 | Visual Project Viewer & Inspector — B026</title>
+  <title>DEBOOGER2000 | Visual Project Viewer & Inspector — B029</title>
   <!-- DEBOOGER2000 V31: standalone visual project viewer, inspector, auditor, and exporter. -->
   <!-- Bundled ZIP engine: JSZip 3.10.1 (MIT/GPLv3 dual licensed; upstream license notice retained below). -->
   
@@ -1020,8 +1020,8 @@ body.workspace-view-active .topbar-logo{display:flex!important}
 @media(min-width:901px){.workspace-pane-right{width:min(600px,calc(100vw - 72px))!important;max-width:none!important;resize:horizontal;min-width:480px;overflow-x:hidden;direction:rtl}.workspace-pane-right>*{direction:ltr}}
 @media(max-width:900px){.workspace-pane-right{width:100%!important;min-width:0!important;max-width:none!important;resize:none}}
 .workspace-pane-right .debooger-pane{overflow-y:auto!important;overflow-x:hidden!important}
-.audit-nav-count{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;margin-left:4px;padding:0 4px;border-radius:5px;font-size:10px;font-weight:700;line-height:1;vertical-align:middle}
-.audit-nav-count.audit-good{background:#dcfce7;color:#067647}.audit-nav-count.audit-warn{background:#fff0cc;color:#a66700}.audit-nav-count.audit-bad{background:#fee2e2;color:#b42318}
+.audit-nav-count{display:none;align-items:center;justify-content:center;min-width:16px;height:16px;margin-left:4px;padding:0 4px;border-radius:5px;font-size:10px;font-weight:700;line-height:1;vertical-align:middle}
+body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-good{background:#dcfce7;color:#067647}.audit-nav-count.audit-warn{background:#fff0cc;color:#a66700}.audit-nav-count.audit-bad{background:#fee2e2;color:#b42318}
 .audit-premium-score{padding:16px 20px!important;align-items:center!important;gap:15px!important;border-bottom:1px solid #e8edf2!important}
 .audit-premium-score #health-gauge{display:grid!important;place-items:center;width:74px!important;height:74px!important;flex:0 0 74px!important;border:5px solid #cbd5e1!important;border-radius:50%!important;font-size:18px!important;font-weight:650!important;line-height:1.15;text-align:center;color:#334155;white-space:normal}
 .audit-premium-score #health-gauge.score-good{border-color:#13a474!important}.audit-premium-score #health-gauge.score-warn{border-color:#e6a740!important}.audit-premium-score #health-gauge.score-bad{border-color:#d85757!important}
@@ -1046,7 +1046,7 @@ body.workspace-view-active .topbar-logo{display:flex!important}
         <div class="topbar-logo">
           <div class="logo-mark">D2</div>
           <div class="logo-text">DEBOOGER<span style="color:var(--primary)">2000</span></div>
-          <span class="build-mark" aria-label="Build B026">B026</span>
+          <span class="build-mark" aria-label="Build B029">B029</span>
         </div>
       </div>
       <nav class="top-nav" aria-label="Main">
@@ -19330,7 +19330,7 @@ codePos,
       const path = location.pathname || '/';
       let h = 2166136261;
       for (let i=0;i<path.length;i++){h^=path.charCodeAt(i);h=Math.imul(h,16777619);}
-      return 'debooger_B026_' + (h>>>0).toString(36);
+      return 'debooger_B029_' + (h>>>0).toString(36);
     })();
     const d2StoreKey = suffix => D2_STORAGE_SCOPE + '_' + suffix;
     const WORKSPACE_DELETED_KEY = d2StoreKey('deleted');
@@ -19580,29 +19580,6 @@ codePos,
       return ['valid','restored'].includes(STATE.projectStatus) && Object.keys(STATE.files || {}).length > 0 && Boolean(STATE.entryFile && STATE.files[STATE.entryFile]);
     }
 
-    const PROJECT_VIEWER_EXPIRY_MS = 30 * 60 * 1000;
-    let projectViewerExpiryTimer = null;
-
-    function clearProjectViewerExpiry() {
-      if (projectViewerExpiryTimer) clearTimeout(projectViewerExpiryTimer);
-      projectViewerExpiryTimer = null;
-    }
-
-    function archiveProjectAfterViewerExpiry() {
-      projectViewerExpiryTimer = null;
-      if (!projectIsValid()) return;
-      saveAuditToHistory();
-      clearLoadedProject();
-      switchView('view-history');
-      showToast('Saved to History after 30 minutes.');
-    }
-
-    function startProjectViewerExpiry() {
-      clearProjectViewerExpiry();
-      if (!projectIsValid()) return;
-      projectViewerExpiryTimer = setTimeout(archiveProjectAfterViewerExpiry, PROJECT_VIEWER_EXPIRY_MS);
-    }
-
     function setProjectStatus(status, detail = '') {
       const allowed = ['empty','loading','valid','failed','deleted','restored'];
       STATE.projectStatus = allowed.includes(status) ? status : 'failed';
@@ -19623,7 +19600,9 @@ codePos,
 
     // Initialize UI and Event Listeners
 
+    let D2_PUBLISH_SOURCE_HTML = '';
     document.addEventListener('DOMContentLoaded', () => {
+      D2_PUBLISH_SOURCE_HTML = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
       setupDropzone();
       setupFileInputs();
       setupPasteDialog();
@@ -20390,9 +20369,10 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
         progress('Reading selected project files', 8);
         const incoming = Array.from(fileList);
         const zips = incoming.filter(f => /\.zip$/i.test(f.name || ''));
-        if (zips.length > 1 && zips.length === incoming.length) await parseMultipleZipArchives(zips);
-        else if (incoming.length === 1 && /\.zip$/i.test(incoming[0].name || '')) await parseZipArchive(incoming[0]);
-        else await parseFileList(fileList);
+        if (zips.length) {
+          if (incoming.length !== 1) throw new Error('Upload one ZIP archive at a time, without extra loose files. Separate archives are kept as separate projects.');
+          await parseZipArchive(zips[0]);
+        } else await parseFileList(fileList);
         if (!Object.keys(STATE.files).length) throw new Error('No usable project files were found.');
 
         progress('Indexing project structure', 32);
@@ -20440,28 +20420,17 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
       return raw.split('/').some(part => part === '..');
     }
 
-    async function parseMultipleZipArchives(zipFiles) {
-      const merged = {};
-      const names = [];
-      for (const zipFile of zipFiles) {
-        const prefix = String(zipFile.name || 'project').replace(/\.zip$/i, '').replace(/[^\w.-]+/g, '-') || 'project';
-        names.push(prefix);
-        const part = await extractZipToMap(zipFile);
-        Object.entries(part).forEach(([path, file]) => { merged[prefix + '/' + path] = file; });
-      }
-      if (!Object.keys(merged).length) throw new Error('No usable files were found in the ZIPs.');
-      STATE.projectName = names.join(' + ');
-      STATE.files = merged;
-      normalizeVirtualProjectRoot();
-    }
-
     async function parseZipArchive(zipFile) {
       STATE.projectName = zipFile.name.replace(/\.zip$/i, '');
       STATE.files = await extractZipToMap(zipFile);
       normalizeVirtualProjectRoot();
     }
 
-    async function extractZipToMap(zipFile, depth = 0) {
+    async function extractZipToMap(zipFile, depth = 0, budget = { totalBytes: 0 }) {
+      const chargeBudget = size => {
+        budget.totalBytes += Number(size) || 0;
+        if (budget.totalBytes > ZIP_LIMITS.maxTotalUncompressedBytes) throw new Error('Nested ZIPs expand beyond the safe total extraction limit.');
+      };
       if (typeof JSZip === 'undefined') {
         throw new Error('ZIP support is unavailable because the ZIP library did not load.');
       }
@@ -20485,6 +20454,8 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
       for (const [relativePathRaw, fileObj] of entries) {
         const originalPath = String(fileObj.unsafeOriginalName || relativePathRaw || '');
         if (archivePathIsUnsafe(originalPath)) throw new Error(`Unsafe ZIP path rejected: ${originalPath}`);
+        const unixMode = Number(fileObj.unixPermissions || 0);
+        if (Number.isFinite(unixMode) && (unixMode & 0xF000) === 0xA000) throw new Error(`Symbolic link rejected in ZIP: ${originalPath}`);
         const relativePath = normalizeVirtualPath(relativePathRaw);
         if (!relativePath || relativePath.startsWith('__MACOSX/') || /(^|\/)\.DS_Store$/i.test(relativePath)) continue;
         if (seen.has(relativePath)) throw new Error(`ZIP contains duplicate normalized path: ${relativePath}`);
@@ -20522,7 +20493,8 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
           if (bytes.byteLength > ZIP_LIMITS.maxSingleUncompressedBytes) throw new Error(`Nested ZIP entry is too large: ${relativePath}`);
           totalExtracted += bytes.byteLength;
           if (totalExtracted > ZIP_LIMITS.maxTotalUncompressedBytes) throw new Error('ZIP expands beyond the safe total extraction limit.');
-          const nestedFiles = await extractZipToMap(new Blob([bytes], { type: 'application/zip' }), depth + 1);
+          chargeBudget(bytes.byteLength);
+          const nestedFiles = await extractZipToMap(new Blob([bytes], { type: 'application/zip' }), depth + 1, budget);
           const nestedRoot = normalizeVirtualPath(relativePath.replace(/\.zip$/i, '')) || `archive-${depth + 1}`;
           Object.entries(nestedFiles).forEach(([nestedPath, nestedFile]) => {
             const combined = normalizeVirtualPath(`${nestedRoot}/${nestedPath}`);
@@ -20537,12 +20509,14 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
           if (actualBytes > ZIP_LIMITS.maxSingleUncompressedBytes) throw new Error(`ZIP entry is too large after extraction: ${relativePath}`);
           totalExtracted += actualBytes;
           if (totalExtracted > ZIP_LIMITS.maxTotalUncompressedBytes) throw new Error('ZIP expands beyond the safe total extraction limit.');
+          chargeBudget(actualBytes);
           extracted[relativePath] = { content: textValue, size: actualBytes, type, modified: false, binary: false };
         } else {
           const bytes = await fileObj.async('uint8array');
           if (bytes.byteLength > ZIP_LIMITS.maxSingleUncompressedBytes) throw new Error(`ZIP entry is too large after extraction: ${relativePath}`);
           totalExtracted += bytes.byteLength;
           if (totalExtracted > ZIP_LIMITS.maxTotalUncompressedBytes) throw new Error('ZIP expands beyond the safe total extraction limit.');
+          chargeBudget(bytes.byteLength);
           const base64 = encodeArrayBufferToBase64(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
           extracted[relativePath] = { content: base64, size: bytes.byteLength, type, modified: false, binary: true, encoding: 'base64' };
         }
@@ -20552,6 +20526,21 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
 
     async function parseFileList(fileList) {
       if (!fileList || !fileList.length) throw new Error('No files were selected.');
+      if (fileList.length > ZIP_LIMITS.maxEntries) throw new Error(`Project has more than ${ZIP_LIMITS.maxEntries} files.`);
+      let totalBytes = 0;
+      const seenPaths = new Set();
+      for (const file of fileList) {
+        const size = Number(file && file.size || 0);
+        if (size > ZIP_LIMITS.maxSingleUncompressedBytes) throw new Error(`File is too large to index safely: ${file.name || 'unnamed file'}`);
+        totalBytes += size;
+        if (totalBytes > ZIP_LIMITS.maxTotalUncompressedBytes) throw new Error('Selected files exceed the 512 MB safe intake limit.');
+        const path = normalizeVirtualPath(file.webkitRelativePath || file.name);
+        if (path && !path.startsWith('__MACOSX/') && !/(^|\/)\.DS_Store$/i.test(path)) {
+          const key = path.toLowerCase();
+          if (seenPaths.has(key)) throw new Error(`Duplicate file path in selection: ${path}`);
+          seenPaths.add(key);
+        }
+      }
       STATE.projectName = fileList[0].webkitRelativePath ? fileList[0].webkitRelativePath.split('/')[0] : fileList[0].name;
       for (let i = 0; i < fileList.length; i++) {
         const f = fileList[i];
@@ -20575,7 +20564,7 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
       if (lower.endsWith('.css')) return 'css';
       if (lower.endsWith('.js') || lower.endsWith('.mjs') || lower.endsWith('.cjs')) return 'javascript';
       if (lower.endsWith('.jsx')) return 'jsx';
-      if (lower.endsWith('.ts')) return 'typescript';
+      if (lower.endsWith('.ts') || lower.endsWith('.mts') || lower.endsWith('.cts')) return 'typescript';
       if (lower.endsWith('.tsx')) return 'tsx';
       if (lower.endsWith('.json')) return 'json';
       if (lower.endsWith('.md') || lower.endsWith('.txt') || lower.endsWith('.xml') || lower.endsWith('.svg') || lower.endsWith('.py') || lower.endsWith('.sh') || lower.endsWith('.vbs') || lower.endsWith('.yml') || lower.endsWith('.yaml') || lower.endsWith('.env') || lower.endsWith('.gitignore')) return 'text';
@@ -20696,18 +20685,22 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
 
     function isReactProjectFiles(files = STATE.files) {
       const keys = Object.keys(files || {});
-      if (keys.some(k => /\.(tsx|jsx)$/i.test(k))) return true;
-      const pkgKey = keys.find(k => /(^|\/)package\.json$/i.test(k));
-      if (!pkgKey || files[pkgKey]?.binary) return false;
-      try {
-        const pkg = JSON.parse(String(files[pkgKey].content || '{}'));
-        return Boolean(
-          pkg?.dependencies?.react || pkg?.dependencies?.['react-dom'] ||
-          pkg?.devDependencies?.react || pkg?.devDependencies?.['react-dom']
-        );
-      } catch (err) {
-        return false;
+      const pkgKey = b005SelectPackageJson(files) || keys.find(k => /(^|\/)package\.json$/i.test(k));
+      if (pkgKey && files[pkgKey] && !files[pkgKey].binary) {
+        try {
+          const pkg = JSON.parse(getVirtualFileText(files[pkgKey]));
+          const deps = Object.assign({}, pkg.dependencies, pkg.devDependencies, pkg.peerDependencies, pkg.optionalDependencies);
+          if (['react','react-dom','next','gatsby','react-scripts','@remix-run/react','react-router','react-router-dom','@vitejs/plugin-react'].some(name => deps[name])) return true;
+        } catch (_) {}
       }
+      const sourceFiles = keys.filter(k => /\.(?:js|mjs|cjs|jsx|ts|tsx|mts|cts)$/i.test(k) && !/(^|\/)(?:node_modules|dist|build|out)\//i.test(k));
+      return sourceFiles.some(k => {
+        const file = files[k];
+        if (!file || file.binary) return false;
+        const code = getVirtualFileText(file);
+        return /(?:from\s*|import\s*\(|require\s*\()\s*['"](?:react|react-dom(?:\/client|\/jsx-runtime)?|preact\/compat)['"]/.test(code) ||
+          /\b(?:ReactDOM\.render|createRoot|React\.createElement)\s*\(/.test(code);
+      });
     }
 
     async function finishIntakeProcess(options = {}) {
@@ -20749,7 +20742,6 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
       const previewWait = !!options.waitForMount && d2PreviewStarted && typeof d2PreviewStarted.then === 'function';
       if (previewWait) setProjectStatus('loading');
       else setProjectStatus(restoring ? 'restored' : 'valid');
-      startProjectViewerExpiry();
       if (!restoring) saveAuditToHistory();
       progress?.(previewWait ? 'Waiting for React to mount' : 'Project ready', previewWait ? 92 : 100);
       if (!previewWait) showToast(`${restoring ? 'Restored' : 'Loaded'}: ${STATE.projectName} (${Object.keys(STATE.files).length} files)`);
@@ -20850,11 +20842,13 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
       else if (fileKeys.length === 1 && /\.html?$/i.test(fileKeys[0])) STATE.projectType = 'single-html';
       else STATE.projectType = 'html-static';
 
-      const rootIndex = fileKeys.find(k => /^index\.html?$/i.test(k));
-      const nestedIndexes = fileKeys.filter(k => /(^|\/)index\.html?$/i.test(k)).sort((a, b) => a.split('/').length - b.split('/').length || a.length - b.length);
-      const anyHtml = fileKeys.filter(k => /\.html?$/i.test(k)).sort((a, b) => a.split('/').length - b.split('/').length || a.length - b.length)[0];
-      const readable = fileKeys.filter(k => isReadablePreviewPath(k)).sort((a, b) => a.split('/').length - b.split('/').length || a.length - b.length)[0];
-      STATE.entryFile = rootIndex || nestedIndexes[0] || anyHtml || readable || fileKeys[0] || 'index.html';
+      const packageRoot = packageKey ? packageKey.slice(0, -'package.json'.length) : '';
+      const scopedKeys = packageRoot ? fileKeys.filter(k => k.startsWith(packageRoot)) : fileKeys;
+      const rootIndex = scopedKeys.find(k => k === packageRoot + 'index.html' || k === packageRoot + 'index.htm');
+      const nestedIndexes = scopedKeys.filter(k => /(^|\/)index\.html?$/i.test(k)).sort((a, b) => a.split('/').length - b.split('/').length || a.length - b.length);
+      const anyHtml = scopedKeys.filter(k => /\.html?$/i.test(k)).sort((a, b) => a.split('/').length - b.split('/').length || a.length - b.length)[0];
+      const readable = scopedKeys.filter(k => isReadablePreviewPath(k)).sort((a, b) => a.split('/').length - b.split('/').length || a.length - b.length)[0];
+      STATE.entryFile = rootIndex || nestedIndexes[0] || anyHtml || readable || scopedKeys[0] || fileKeys[0] || 'index.html';
     }
 
     function detectBuildStatus() {
@@ -20870,7 +20864,7 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
         const missingDependencies = detectExternalSourcePackages();
         if (compiled || (entry && /\.html?$/i.test(STATE.entryFile) && !htmlBootsFrameworkSource(getVirtualFileText(entry)))) status = { code:'READY', label:'Ready', detail:compiled ? 'Compiled frontend selected: ' + compiled : 'Browser-ready HTML selected: ' + STATE.entryFile };
         else if (server) status = { code:'REQUIRES_SERVER', label:'Requires Server', detail:'This project needs a running server or a static export of its frontend.' };
-        else if (STATE.projectType === 'react-vite' || STATE.projectType === 'next' || keys.some(k => /\.(?:tsx|jsx)$/i.test(k))) status = { code:'NEEDS_BUILD', label:'Needs Build', detail:'React source detected but no compiled dist/build/out frontend exists. The source-only preview is best-effort, not a complete npm build.' };
+        else if (STATE.projectType === 'react-vite' || STATE.projectType === 'next' || keys.some(k => /\.(?:tsx|jsx|mts|cts|mjs|cjs)$/i.test(k))) status = { code:'NEEDS_BUILD', label:'Needs Build', detail:'React source detected but no compiled dist/build/out frontend exists. The source-only preview is best-effort, not a complete npm build.' };
         else if (missingFiles.length) status = { code:'MISSING_FILE', label:'Missing File', detail:String(missingFiles[0].evidence || missingFiles[0].title || 'Local imported file was not found.') };
         else if (missingDependencies.length) status = { code:'MISSING_DEPENDENCY', label:'Missing Dependency', detail:String(missingDependencies[0].evidence || missingDependencies[0].title || 'External dependency was not found.') };
         else status = { code:'NEEDS_BUILD', label:'Needs Build', detail:'No browser-ready compiled frontend was found. Upload the normal build output.' };
@@ -22008,7 +22002,7 @@ h1.file{font-size:15px;margin:0 0 12px} pre{white-space:pre-wrap;word-break:brea
       const found = [];
       const seen = new Set();
       Object.entries(files || {}).forEach(([path, file]) => {
-        if (!file || file.binary || !/\.(?:js|mjs|cjs|jsx|ts|tsx)$/i.test(path) || /(^|\/)(?:node_modules|dist|build|out)\//i.test(path)) return;
+        if (!file || file.binary || !/\.(?:js|mjs|cjs|jsx|ts|tsx|mts|cts)$/i.test(path) || /(^|\/)(?:node_modules|dist|build|out)\//i.test(path)) return;
         if (/(?:^|\/)(?:vite\.config|vitest\.config|tailwind\.config|postcss\.config|eslint\.config)(?:\.[^/]+)?$/i.test(path)) return;
         const source = getVirtualFileText(file);
         const re = /(?:from\s+|import\s*\(|require\s*\()\s*["']([^"']+)["']/g;
@@ -22058,7 +22052,7 @@ h1.file{font-size:15px;margin:0 0 12px} pre{white-space:pre-wrap;word-break:brea
         else if (!pkg) add(pkgInfo.path, 'The package manifest exists but is not valid JSON.');
         if (!findReactSourceEntry(files)) add('src/main.tsx, src/main.jsx, src/index.tsx, src/index.jsx, or App.tsx/App.jsx', 'A React entry component is required to start the source preview.');
         if (!compiled) {
-          add('A deployable compiled output folder', 'DEBOOGER recognizes standard and configured React/framework output folders. If one is missing, it will try the source-only browser fallback.');
+          add('A genuine project build', 'B028 source preview is best-effort. Use the Build React / Vite action when WebContainer prerequisites are available; it honors npm/pnpm/yarn lockfiles and package-manager selection. Otherwise run the original build command in an isolated Node environment and upload its real output.');
           const wc = getWebContainerSupport();
           if (!wc.supported) add('Full Vite Builder mode', wc.reason || 'Open D2 in a WebContainer-compatible browser session to build the missing dist automatically.');
         }
@@ -22121,7 +22115,7 @@ code{font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSyste
     }
 
     function constructReactPreviewShell(message, isError) {
-      return constructPreviewProblemShell(isError ? 'React preview stopped' : 'Loading the real page', message, isError);
+      return constructPreviewProblemShell(isError ? 'React source preview stopped' : 'Best-effort React source preview — not a production build', message, isError);
     }
 
     function readProjectPackageJson(files) {
@@ -22288,10 +22282,24 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
       if (files['package.json'] && !files['package.json'].binary) {
         try { rootPkg = JSON.parse(getVirtualFileText(files['package.json'])||'{}'); } catch (_) { rootPkg = null; }
       }
-      const useWorkspaces = !!(workspaceDir && rootPkg?.workspaces && pkgInfo.pkg?.name);
-      const installLog = await runWebContainerCommand(wc, 'npm', ['install', '--no-audit', '--no-fund'], { cwd:useWorkspaces?'/':wcCwd, timeoutMs: options.installTimeoutMs || 180000, onOutput });
-      const buildArgs = useWorkspaces ? ['run', 'build', '--workspace', pkgInfo.pkg.name] : ['run','build'];
-      const buildLog = await runWebContainerCommand(wc, 'npm', buildArgs, { cwd:useWorkspaces?'/':wcCwd, timeoutMs: options.buildTimeoutMs || 120000, onOutput });
+      const manager = d2ProjectPackageManager(files, pkgInfo);
+      const workspaceRoot = !!rootPkg?.workspaces || (manager.name === 'pnpm' && Boolean(files['pnpm-workspace.yaml']));
+      const useWorkspaces = !!(workspaceDir && workspaceRoot && pkgInfo.pkg?.name);
+      if (manager.name === 'bun') throw new Error('Bun project detected. B028 does not claim a verified Bun build path yet; build with Bun externally, then upload its configured static output.');
+      let installCommand = 'npm';
+      let installArgs = manager.name === 'npm'
+        ? (manager.locked ? ['ci', '--ignore-scripts', '--no-audit', '--no-fund'] : ['install', '--ignore-scripts', '--no-audit', '--no-fund'])
+        : manager.name === 'pnpm'
+          ? ['pnpm', 'install', ...(manager.locked ? ['--frozen-lockfile'] : []), '--ignore-scripts']
+          : ['yarn', 'install', ...(manager.locked ? [manager.yarnMajor >= 2 ? '--immutable' : '--frozen-lockfile'] : []), ...(manager.yarnMajor >= 2 ? ['--mode=skip-builds'] : ['--ignore-scripts'])];
+      if (manager.name !== 'npm') installCommand = 'corepack';
+      const installLog = await runWebContainerCommand(wc, installCommand, installArgs, { cwd:useWorkspaces?'/':wcCwd, timeoutMs: options.installTimeoutMs || 180000, onOutput });
+      let buildCommand = installCommand;
+      let buildArgs;
+      if (manager.name === 'pnpm') buildArgs = useWorkspaces ? ['pnpm', '--filter', pkgInfo.pkg.name, 'run', 'build'] : ['pnpm', 'run', 'build'];
+      else if (manager.name === 'yarn') buildArgs = useWorkspaces ? ['yarn', 'workspace', pkgInfo.pkg.name, 'build'] : ['yarn', 'build'];
+      else buildArgs = useWorkspaces ? ['run', 'build', '--workspace', pkgInfo.pkg.name] : ['run','build'];
+      const buildLog = await runWebContainerCommand(wc, buildCommand, buildArgs, { cwd:useWorkspaces?'/':wcCwd, timeoutMs: options.buildTimeoutMs || 120000, onOutput });
       const configured = configuredWebBuildDirectories(files);
       const bases = ['dist', 'build', 'out', 'output', 'release', 'site', 'www', 'web-build', 'storybook-static', '.output', '.vercel', 'public', 'docs'];
       const candidates = [...new Set([...configured, ...bases.map(dir=>workspaceDir?workspaceDir+'/'+dir:dir), ...bases])];
@@ -22347,9 +22355,86 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
       }
     }
 
+    function d2LockFilesForPackage(files, pkgInfo) {
+      const packageRoot = pkgInfo?.path ? pkgInfo.path.slice(0, -'package.json'.length) : '';
+      const roots = [...new Set([packageRoot, ''])];
+      const candidates = [];
+      for (const root of roots) {
+        for (const name of ['npm-shrinkwrap.json', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb']) {
+          const path = root + name;
+          const file = files && files[path];
+          if (file && (!file.binary || name === 'bun.lockb')) candidates.push({ path, name, text: file.binary ? '' : getVirtualFileText(file) });
+        }
+      }
+      return candidates;
+    }
+
+    function d2LockedPackageVersion(files, name, pkgInfo = readProjectPackageJson(files)) {
+      const target = String(name || '');
+      for (const lock of d2LockFilesForPackage(files, pkgInfo)) {
+        try {
+          if (/^(?:npm-shrinkwrap|package-lock)\.json$/i.test(lock.name)) {
+            const parsed = JSON.parse(lock.text);
+            const entries = parsed.packages && typeof parsed.packages === 'object' ? Object.entries(parsed.packages) : [];
+            const hits = entries.filter(([path, item]) => item && item.version && (path === 'node_modules/' + target || path.endsWith('/node_modules/' + target)));
+            const packageRoot = pkgInfo?.path ? pkgInfo.path.slice(0, -'package.json'.length) : '';
+            hits.sort((a,b) => Number(b[0].startsWith(packageRoot)) - Number(a[0].startsWith(packageRoot)) || a[0].length - b[0].length);
+            if (hits[0]) return String(hits[0][1].version);
+            const legacy = parsed.dependencies && parsed.dependencies[target];
+            if (legacy?.version) return String(legacy.version);
+          } else if (/^yarn\.lock$/i.test(lock.name)) {
+            for (const block of lock.text.split(/\n\s*\n/)) {
+              const header = (block.split(/\r?\n/,1)[0] || '').trim();
+              if (header.includes(target + '@')) {
+                const m = block.match(/^\s+version\s+["']?([^"'\s]+)["']?/m);
+                if (m) return m[1];
+              }
+            }
+          } else if (/^pnpm-lock\.yaml$/i.test(lock.name)) {
+            for (const line of lock.text.split(/\r?\n/)) {
+              let key = line.trim();
+              if (!key.startsWith('/') && !key.startsWith("'") && !key.startsWith('"')) continue;
+              key = key.replace(/:$/, '').replace(/^['"]|['"]$/g, '').replace(/^\/+/, '');
+              const prefix = target + '@';
+              if (!key.startsWith(prefix)) continue;
+              const m = key.slice(prefix.length).match(/^(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)(?:[(:]|$)/);
+              if (m) return m[1];
+            }
+          } else if (/^bun\.lock$/i.test(lock.name)) {
+            const parsed = JSON.parse(lock.text);
+            const raw = JSON.stringify(parsed.packages?.[target] || '');
+            const escaped = target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\//g, '\\/');
+            const m = raw.match(new RegExp(escaped + '@(\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?)'));
+            if (m) return m[1];
+          }
+        } catch (_) {}
+      }
+      return '';
+    }
+
+    function d2ProjectPackageManager(files, pkgInfo = readProjectPackageJson(files)) {
+      const packageRoot = pkgInfo?.path ? pkgInfo.path.slice(0, -'package.json'.length) : '';
+      const managerSpec = String(pkgInfo?.pkg?.packageManager || '').toLowerCase();
+      const specified = managerSpec.match(/^(npm|pnpm|yarn|bun)(?:@(\d+)(?:\.\d+){0,2})?/);
+      const rootFiles = d2LockFilesForPackage(files, pkgInfo);
+      let name = specified ? specified[1] : '';
+      if (!name) {
+        if (rootFiles.some(x => /^(?:npm-shrinkwrap|package-lock)\.json$/i.test(x.name))) name = 'npm';
+        else if (rootFiles.some(x => /^pnpm-lock\.yaml$/i.test(x.name))) name = 'pnpm';
+        else if (rootFiles.some(x => /^yarn\.lock$/i.test(x.name))) name = 'yarn';
+        else if (rootFiles.some(x => /^bun\.lockb?$/i.test(x.name))) name = 'bun';
+        else name = 'npm';
+      }
+      const lockNames = { npm:['package-lock.json','npm-shrinkwrap.json'], pnpm:['pnpm-lock.yaml'], yarn:['yarn.lock'], bun:['bun.lock','bun.lockb'] };
+      const locked = rootFiles.some(x => (lockNames[name] || []).includes(x.name));
+      const yarnVersion = managerSpec.match(/^yarn@(\d+)/);
+      return { name, locked, packageRoot, yarnMajor:yarnVersion ? Number(yarnVersion[1]) : 1 };
+    }
+
     function npmVersion(pkg, name, fallback) {
-      const raw = (pkg && ((pkg.dependencies && pkg.dependencies[name]) || (pkg.devDependencies && pkg.devDependencies[name]))) || fallback;
-      const m = String(raw || fallback || '').match(/\d+\.\d+(?:\.\d+)?/);
+      const locked = d2LockedPackageVersion(STATE.files, name);
+      const raw = locked || (pkg && ((pkg.dependencies && pkg.dependencies[name]) || (pkg.devDependencies && pkg.devDependencies[name]) || (pkg.peerDependencies && pkg.peerDependencies[name]) || (pkg.optionalDependencies && pkg.optionalDependencies[name]))) || fallback;
+      const m = String(raw || fallback || '').match(/\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?|\d+\.\d+(?:\.\d+)?/);
       return m ? m[0] : fallback;
     }
 
@@ -22384,35 +22469,95 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
       aliases[key] = dest;
     }
 
-    function parseViteConfigAliases(files) {
-      const key = Object.keys(files || {}).find(k => /(^|\/)vite\.config\.(js|ts|mjs|cjs)$/i.test(k));
+    function d2ParseJsonc(text) {
+      const src = String(text || '');
+      let clean = '', quote = '', escaped = false, lineComment = false, blockComment = false;
+      for (let i = 0; i < src.length; i++) {
+        const c = src[i], n = src[i + 1];
+        if (lineComment) { if (c === '\n') { lineComment = false; clean += c; } continue; }
+        if (blockComment) { if (c === '*' && n === '/') { blockComment = false; i++; } else if (c === '\n') clean += c; continue; }
+        if (quote) { clean += c; if (escaped) escaped = false; else if (c === '\\') escaped = true; else if (c === quote) quote = ''; continue; }
+        if (c === '"') { quote = c; clean += c; continue; }
+        if (c === '/' && n === '/') { lineComment = true; i++; continue; }
+        if (c === '/' && n === '*') { blockComment = true; i++; continue; }
+        clean += c;
+      }
+      let out = '', inString = false; escaped = false;
+      for (let i = 0; i < clean.length; i++) {
+        const c = clean[i];
+        if (inString) { out += c; if (escaped) escaped = false; else if (c === '\\') escaped = true; else if (c === '"') inString = false; continue; }
+        if (c === '"') { inString = true; out += c; continue; }
+        if (c === ',') { let j = i + 1; while (/\s/.test(clean[j] || '')) j++; if (clean[j] === '}' || clean[j] === ']') continue; }
+        out += c;
+      }
+      return JSON.parse(out);
+    }
+
+    function d2ConfigDir(path) { const p = normalizeVirtualPath(path); const i = p.lastIndexOf('/'); return i < 0 ? '' : p.slice(0, i); }
+    function d2ResolveConfigPath(base, value, allowBare = false) {
+      const raw = String(value || '').replace(/\\/g, '/');
+      if (!raw || (!allowBare && !/^(?:\.|\/)/.test(raw))) return '';
+      const joined = raw.startsWith('/') ? raw.replace(/^\/+/, '') : (base ? base + '/' : '') + raw;
+      const normalized = normalizeVirtualPath(joined);
+      return normalized;
+    }
+
+    function d2TsConfigAliasChain(files, key, seen = new Set()) {
+      if (!key || seen.has(key) || !files[key] || files[key].binary) return { aliases:{}, baseUrl:'' };
+      seen.add(key);
+      let config;
+      try { config = d2ParseJsonc(getVirtualFileText(files[key])); } catch (_) { return { aliases:{}, baseUrl:'' }; }
+      const dir = d2ConfigDir(key);
+      const ext = typeof config.extends === 'string' ? d2ResolveConfigPath(dir, config.extends) : '';
+      let inherited = { aliases:{}, baseUrl:'' };
+      if (ext) {
+        const candidates = [ext, ext + '.json', ext + '/tsconfig.json'];
+        const parent = candidates.find(x => files[x]);
+        if (parent) inherited = d2TsConfigAliasChain(files, parent, seen);
+      }
+      const compiler = config.compilerOptions || {};
+      const baseUrl = Object.prototype.hasOwnProperty.call(compiler, 'baseUrl')
+        ? d2ResolveConfigPath(dir, compiler.baseUrl)
+        : (inherited.baseUrl || dir);
+      const aliases = Object.assign({}, inherited.aliases);
+      Object.entries(compiler.paths || {}).forEach(([from, values]) => {
+        const target = Array.isArray(values) ? values[0] : values;
+        if (typeof target !== 'string') return;
+        const dest = d2ResolveConfigPath(baseUrl, target, true);
+        if (dest) addPathAlias(aliases, from, dest);
+      });
+      return { aliases, baseUrl };
+    }
+
+    function parseViteConfigAliases(files, pkgPath) {
+      const packageRoot = pkgPath ? pkgPath.replace(/[^/]+$/, '') : '';
+      const keys = Object.keys(files || {}).filter(k => /(^|\/)vite\.config\.(?:js|ts|mjs|cjs|mts|cts)$/i.test(k));
+      keys.sort((a,b) => Number(b.startsWith(packageRoot)) - Number(a.startsWith(packageRoot)) || a.length - b.length);
+      const key = keys[0];
       if (!key || !files[key] || files[key].binary) return {};
       const text = String(files[key].content || '').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
       const aliases = {};
       const block = text.match(/alias\s*:\s*\{([\s\S]*?)\}/);
       const src = block ? block[1] : text;
-      [...src.matchAll(/['"]([^'"]+)['"]\s*:\s*(?:path\.resolve\([^)]*?['"]([^'"]+)['"][^)]*\)|fileURLToPath\([^)]*?['"]([^'"]+)['"][^)]*\)|['"]([^'"]+)['"])/g)].forEach(m => {
+      [...src.matchAll(/["']([^"']+)["']\s*:\s*(?:path\.resolve\([^)]*?["']([^"']+)["'][^)]*\)|fileURLToPath\([^)]*?["']([^"']+)["'][^)]*\)|["']([^"']+)["'])/g)].forEach(m => {
         addPathAlias(aliases, m[1], m[2] || m[3] || m[4]);
       });
-      [...text.matchAll(/find\s*:\s*['"]([^'"]+)['"][\s\S]{0,160}?replacement\s*:\s*(?:path\.resolve\([^)]*?['"]([^'"]+)['"][^)]*\)|['"]([^'"]+)['"])/g)].forEach(m => {
+      [...text.matchAll(/find\s*:\s*["']([^"']+)["'][\s\S]{0,160}?replacement\s*:\s*(?:path\.resolve\([^)]*?["']([^"']+)["'][^)]*\)|["']([^"']+)["'])/g)].forEach(m => {
         addPathAlias(aliases, m[1], m[2] || m[3]);
       });
       return aliases;
     }
 
     function projectPathAliases(files, pkgPath) {
-      const aliases = Object.assign({ '@': 'src', '~': 'src' }, parseViteConfigAliases(files));
       const root = pkgPath ? pkgPath.replace(/[^/]+$/, '') : '';
-      const tsKey = Object.keys(files || {}).find(k => /(^|\/)tsconfig(?:\.\w+)?\.json$/i.test(k));
-      if (tsKey && files[tsKey] && !files[tsKey].binary) {
-        try {
-          const ts = JSON.parse(String(files[tsKey].content || '{}').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, ''));
-          const paths = (ts.compilerOptions && ts.compilerOptions.paths) || {};
-          Object.entries(paths).forEach(([from, to]) => {
-            addPathAlias(aliases, from, Array.isArray(to) ? to[0] : to);
-          });
-        } catch (_) {}
-      }
+      const aliases = { '@':'src', '~':'src' };
+      const configs = Object.keys(files || {}).filter(k => k.startsWith(root) && /(^|\/)(?:tsconfig(?:\.[^/]+)?|jsconfig)\.json$/i.test(k));
+      configs.sort((a,b) => {
+        const rank = x => /tsconfig\.app\.json$/i.test(x) ? 0 : /tsconfig\.json$/i.test(x) ? 1 : /jsconfig\.json$/i.test(x) ? 2 : 3;
+        return rank(a) - rank(b) || a.length - b.length;
+      });
+      if (configs[0]) Object.assign(aliases, d2TsConfigAliasChain(files, configs[0]).aliases);
+      Object.assign(aliases, parseViteConfigAliases(files, pkgPath));
       if (root) {
         Object.keys(aliases).forEach(k => {
           const dest = aliases[k];
@@ -22458,7 +22603,7 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
       }
       const tries = [];
       bases.forEach(base => {
-        [base, base + '.tsx', base + '.ts', base + '.jsx', base + '.js', base + '.mjs', base + '.css', base + '.json', base + '.svg',
+        [base, base + '.tsx', base + '.ts', base + '.mts', base + '.cts', base + '.jsx', base + '.js', base + '.mjs', base + '.cjs', base + '.css', base + '.scss', base + '.sass', base + '.less', base + '.json', base + '.svg',
           base + '/index.tsx', base + '/index.ts', base + '/index.jsx', base + '/index.js', base + '/index.css'].forEach(item => tries.push(item));
       });
       for (const t of tries) {
@@ -22472,7 +22617,10 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
 
     function findReactSourceEntry(files) {
       const keys = Object.keys(files || {});
-      const htmlKey = keys.find(k => /(^|\/)index\.html?$/i.test(k) && !/(^|\/)(?:dist|build|out)\//i.test(k));
+      const pkgPath = b005SelectPackageJson(files);
+      const packageRoot = pkgPath ? pkgPath.slice(0, -'package.json'.length) : '';
+      const scopedKeys = packageRoot ? keys.filter(k => k.startsWith(packageRoot)) : keys;
+      const htmlKey = scopedKeys.find(k => /(^|\/)index\.html?$/i.test(k) && !/(^|\/)(?:dist|build|out)\//i.test(k));
       if (htmlKey && files[htmlKey] && !files[htmlKey].binary) {
         const html = getVirtualFileText(files[htmlKey]);
         const m = html.match(/<script[^>]+type=["']module["'][^>]+src=["']([^"']+)["']/i) || html.match(/<script[^>]+src=["']([^"']+)["'][^>]+type=["']module["']/i);
@@ -22481,69 +22629,180 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
           if (hit) return { entry: hit.path, htmlKey };
         }
       }
-      const preferred = keys.filter(k => /(^|\/)(?:main|index|app|router)\.(?:tsx|jsx|ts|js)$/i.test(k) && !/(^|\/)(?:dist|build|out|node_modules|scripts)\//i.test(k) && !/\.(?:test|spec)\./i.test(k))
+      const preferred = scopedKeys.filter(k => /(^|\/)(?:main|index|app|router)\.(?:tsx|jsx|ts|js|mts|cts|mjs|cjs)$/i.test(k) && !/(^|\/)(?:dist|build|out|node_modules|scripts)\//i.test(k) && !/\.(?:test|spec)\./i.test(k))
         .sort((a,b) => {
           const score = p => /main\.(tsx|jsx)$/i.test(p) ? 0 : /index\.(tsx|jsx)$/i.test(p) ? 1 : /app\.(tsx|jsx)$/i.test(p) ? 2 : 3;
           return score(a) - score(b) || a.length - b.length;
         });
       if (preferred[0]) return { entry: preferred[0], htmlKey: htmlKey || '' };
-      const any = keys.find(k => /\.(?:tsx|jsx)$/i.test(k) && !/(node_modules|dist|build|out)\//i.test(k));
+      const any = scopedKeys.find(k => /\.(?:tsx|jsx|mts|cts|mjs|cjs)$/i.test(k) && !/(node_modules|dist|build|out)\//i.test(k));
       return any ? { entry: any, htmlKey: htmlKey || '' } : null;
     }
 
     function collectEnvFromFiles(files) {
       const env = { MODE: 'development', DEV: true, PROD: false, BASE_URL: '/', SSR: false };
-      Object.entries(files || {}).forEach(([path, file]) => {
-        if (!file || file.binary || !/(^|\/)\.env(?:\.local|\.development|\.production)?$/i.test(path)) return;
+      const sourceNames = ['.env', '.env.local', '.env.development', '.env.development.local'];
+      const ordered = [];
+      sourceNames.forEach(name => {
+        Object.entries(files || {}).forEach(([path, file]) => {
+          if (normalizeVirtualPath(path).split('/').pop() === name && file && !file.binary) ordered.push([path, file]);
+        });
+      });
+      ordered.forEach(([path, file]) => {
         String(file.content || '').split(/\r?\n/).forEach(line => {
           const m = line.match(/^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
-          if (!m) return;
-          let val = m[2].trim();
+          if (!m || !m[1].startsWith('VITE_')) return;
+          let val = m[2].trim().replace(/\s+#.*$/, '');
           if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) val = val.slice(1, -1);
           env[m[1]] = val;
-          if (m[1].startsWith('VITE_')) env[m[1]] = val;
         });
       });
       return env;
     }
 
-    function viteGlobToRegex(pattern) {
-      let s = normalizeVirtualPath(pattern);
-      s = s.replace(/[.+^${}()|[\]\\]/g, '\\$&')
-        .replace(/\*\*/g, ':::STAR:::')
-        .replace(/\*/g, '[^/]*')
-        .replace(/:::STAR:::/g, '.*');
-      return new RegExp('^' + s + '$', 'i');
+    function d2NormalizeGlobPath(value) {
+      const out = [];
+      String(value || '').replace(/\\/g, '/').split('/').forEach(part => {
+        if (!part || part === '.') return;
+        if (part === '..') { if (out.length) out.pop(); return; }
+        out.push(part);
+      });
+      return out.join('/');
     }
 
-    function matchProjectGlob(pattern, fromPath, files) {
-      let pat = String(pattern || '').trim();
-      if (!pat) return [];
-      if (pat.startsWith('/')) pat = pat.replace(/^\/+/, '');
-      else {
+    function viteGlobToRegex(pattern) {
+      const src = String(pattern || '');
+      let out = '^';
+      for (let i = 0; i < src.length; i++) {
+        const c = src[i];
+        if (c === '*' && src[i + 1] === '*' && src[i + 2] === '/') { out += '(?:.*/)?'; i += 2; continue; }
+        if (c === '*' && src[i + 1] === '*') { out += '.*'; i++; continue; }
+        if (c === '*') { out += '[^/]*'; continue; }
+        if (c === '?') { out += '[^/]'; continue; }
+        if (c === '{') {
+          const end = src.indexOf('}', i + 1);
+          if (end > i) { out += '(?:' + src.slice(i + 1, end).split(',').map(x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')'; i = end; continue; }
+        }
+        out += /[.+^${}()|[\]\\]/.test(c) ? '\\' + c : c;
+      }
+      return new RegExp(out + '$');
+    }
+
+    function d2GlobProjectPattern(pattern, fromPath, aliases, files) {
+      let pat = String(pattern || '').replace(/\\/g, '/').trim();
+      if (!pat) return '';
+      const pkgPath = b005SelectPackageJson(files || {});
+      const packageRoot = pkgPath ? pkgPath.slice(0, -'package.json'.length) : '';
+      const scopeToPackage = (value, force = false) => {
+        const normalized = d2NormalizeGlobPath(value);
+        return force && packageRoot && !normalized.startsWith(packageRoot) ? packageRoot + normalized : normalized;
+      };
+      const keys = Object.keys(aliases || {}).filter(k => k && k !== '@' && k !== '~').sort((a,b) => b.length-a.length);
+      let aliased = false;
+      for (const key of keys) {
+        if (pat === key || pat.startsWith(key + '/')) { pat = String(aliases[key] || '') + pat.slice(key.length); aliased = true; break; }
+      }
+      if (pat.startsWith('@/') || pat.startsWith('~/')) { pat = String(aliases[pat[0]] || 'src') + pat.slice(1); aliased = true; }
+      if (pat.startsWith('/')) return scopeToPackage(pat, true);
+      if (!aliased && !/^(?:\.\.?\/)/.test(pat)) return scopeToPackage(pat, true);
+      if (!aliased) {
         const base = normalizeVirtualPath(fromPath).split('/');
         base.pop();
-        pat = normalizeVirtualPath(base.concat(pat.split('/')).join('/'));
+        pat = base.concat(pat.split('/')).join('/');
       }
-      const rx = viteGlobToRegex(pat);
+      return scopeToPackage(pat);
+    }
+
+    function matchProjectGlob(pattern, fromPath, files, aliases) {
+      const projectPattern = d2GlobProjectPattern(pattern, fromPath, aliases, files);
+      if (!projectPattern) return [];
+      const rx = viteGlobToRegex(projectPattern);
       return Object.keys(files || {}).filter(k => {
         if (!files[k] || files[k].binary) return false;
         if (/(^|\/)(?:node_modules|dist|build|out)\//i.test(k)) return false;
-        return rx.test(normalizeVirtualPath(k));
+        return rx.test(d2NormalizeGlobPath(k));
       }).sort();
     }
 
-    function expandImportMetaGlob(code, fromPath, files, aliases) {
-      return String(code || '').replace(/import\.meta\.glob\(\s*(['"])([^'"]+)\1\s*(?:,\s*\{[\s\S]*?\})?\s*\)/g, (m, q, pattern) => {
-        const hits = matchProjectGlob(pattern, fromPath, files);
-        if (!hits.length) return '({})';
-        const parts = hits.map(p => {
-          const spec = resolveReactLocal('./' + p, fromPath, files, aliases) ? ('d2:' + normalizeVirtualPath(p)) : ('d2:' + normalizeVirtualPath(p));
-          const key = './' + normalizeVirtualPath(p);
-          return JSON.stringify(key) + ':()=>import(' + JSON.stringify(spec) + ')';
+    function d2GlobAstValue(node) {
+      if (!node) return undefined;
+      if (node.type === 'Literal') return node.value;
+      if (node.type === 'ArrayExpression') return node.elements.map(d2GlobAstValue);
+      if (node.type === 'ObjectExpression') {
+        const out = {};
+        node.properties.forEach(prop => {
+          if (!prop || prop.type !== 'Property' || prop.computed || prop.kind !== 'init') return;
+          const key = prop.key.name || prop.key.value;
+          out[key] = d2GlobAstValue(prop.value);
         });
-        return '({' + parts.join(',') + '})';
+        return out;
+      }
+      return undefined;
+    }
+
+    function d2RelativeProjectPath(fromPath, toPath) {
+      const from = normalizeVirtualPath(fromPath).split('/'); from.pop();
+      const to = normalizeVirtualPath(toPath).split('/');
+      let common = 0;
+      while (common < from.length && common < to.length && from[common] === to[common]) common++;
+      const parts = [...Array(from.length-common).fill('..'), ...to.slice(common)];
+      const rel = parts.join('/') || '.';
+      return rel.startsWith('.') ? rel : './' + rel;
+    }
+
+    function expandImportMetaGlob(code, fromPath, files, aliases) {
+      const source = String(code || '');
+      if (!/import\.meta\.glob(?:Eager)?\s*\(/.test(source)) return source;
+      if (!globalThis.acorn || typeof globalThis.acorn.parse !== 'function') throw new Error('This project uses import.meta.glob; the browser parser is unavailable. Use the full Vite builder.');
+      let ast;
+      try { ast = globalThis.acorn.parse(source, { ecmaVersion: 'latest', sourceType: 'module', allowHashBang: true }); }
+      catch (err) { throw new Error('Could not parse Vite glob syntax in ' + fromPath + ': ' + String(err && err.message || err)); }
+      const changes = [];
+      const eagerImports = [];
+      let serial = 0;
+      walkAcornAst(ast, node => {
+        if (node.type !== 'CallExpression' || !node.callee || node.callee.type !== 'MemberExpression' || node.callee.computed) return;
+        const obj = node.callee.object;
+        const isImportMeta = obj && obj.type === 'MetaProperty' && obj.meta?.name === 'import' && obj.property?.name === 'meta';
+        const method = node.callee.property && node.callee.property.name;
+        if (!isImportMeta || !['glob','globEager'].includes(method)) return;
+        const rawPatterns = d2GlobAstValue(node.arguments[0]);
+        const patterns = Array.isArray(rawPatterns) ? rawPatterns : [rawPatterns];
+        if (!patterns.length || patterns.some(x => typeof x !== 'string')) throw new Error('Vite import.meta.glob in ' + fromPath + ' must use literal string patterns; computed patterns require a real Vite build.');
+        const options = d2GlobAstValue(node.arguments[1]) || {};
+        const eager = method === 'globEager' || options.eager === true;
+        let query = options.query || (options.as ? '?' + String(options.as) : '');
+        if (query && typeof query === 'object') query = '?' + Object.keys(query).filter(k => query[k]).join('&');
+        query = query ? (String(query).startsWith('?') ? String(query) : '?' + String(query)) : '';
+        const importName = typeof options.import === 'string' ? options.import : '';
+        const positive = patterns.filter(x => !x.startsWith('!'));
+        const negative = patterns.filter(x => x.startsWith('!')).map(x => x.slice(1));
+        const hits = new Set();
+        positive.forEach(pattern => matchProjectGlob(pattern, fromPath, files, aliases).forEach(path => hits.add(path)));
+        negative.forEach(pattern => {
+          const excluded = new Set(matchProjectGlob(pattern, fromPath, files, aliases));
+          excluded.forEach(path => hits.delete(path));
+        });
+        const entries = [];
+        [...hits].sort().forEach(path => {
+          const key = d2RelativeProjectPath(fromPath, path);
+          const spec = key + query;
+          if (eager) {
+            const id = '__d2_glob_' + (serial++);
+            eagerImports.push(importName
+              ? 'import {' + (importName === 'default' ? 'default' : importName) + ' as ' + id + '} from ' + JSON.stringify(spec) + ';'
+              : 'import * as ' + id + ' from ' + JSON.stringify(spec) + ';');
+            entries.push(JSON.stringify(key) + ':' + id);
+          } else {
+            const load = '()=>import(' + JSON.stringify(spec) + ')';
+            entries.push(JSON.stringify(key) + ':' + (importName ? load + '.then(m=>m[' + JSON.stringify(importName) + '])' : load));
+          }
+        });
+        changes.push({ start:node.start, end:node.end, value:'({' + entries.join(',') + '})' });
       });
+      let rewritten = source;
+      changes.sort((a,b) => b.start-a.start).forEach(change => { rewritten = rewritten.slice(0,change.start) + change.value + rewritten.slice(change.end); });
+      return (eagerImports.length ? eagerImports.join('\n') + '\n' : '') + rewritten;
     }
 
     function rewriteImportMetaUrls(code, fromPath, files, aliases) {
@@ -22572,12 +22831,14 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
       const p = normalizeVirtualPath(local.path);
       if (/\braw\b/.test(query)) return 'd2raw:' + p;
       if (/\b(?:react|component)\b/.test(query) && /\.svg$/i.test(p)) return 'd2svg:' + p;
+      if (/\.css$/i.test(p) && /\binline\b/.test(query)) return 'd2raw:' + p;
+      if (/\burl\b/.test(query)) return 'd2asset:' + p;
       if (/\.css$/i.test(p)) {
         if (collectedCss) collectedCss.add(p);
         return 'd2css:' + p;
       }
       if (/\.json$/i.test(p)) return 'd2json:' + p;
-      if (/\burl\b/.test(query) || /\.(png|jpe?g|gif|webp|svg|bmp|ico|woff2?|ttf|mp4|webm)$/i.test(p)) return 'd2asset:' + p;
+      if (/\.(png|jpe?g|gif|webp|svg|bmp|ico|woff2?|ttf|mp4|webm)$/i.test(p)) return 'd2asset:' + p;
       return 'd2:' + p;
     }
 
@@ -22605,7 +22866,7 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
     function bareAliasKeys(filePath, aliases) {
       const keys = new Set();
       const norm = normalizeVirtualPath(filePath);
-      const noExt = norm.replace(/\.(tsx|ts|jsx|js|mjs|cjs|css|json)$/i, '');
+      const noExt = norm.replace(/\.(tsx|ts|mts|cts|jsx|js|mjs|cjs|css|scss|sass|less|json)$/i, '');
       const add = (key) => { if (key && key !== norm && key !== noExt) keys.add(key); };
       Object.keys(aliases || {}).forEach(prefix => {
         const dest = String(aliases[prefix] || '').replace(/\/$/, '');
@@ -22627,6 +22888,7 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
       const replaceSpec = (spec) => {
         const raw = String(spec || '').trim();
         if (!raw || /^(?:https?:|data:|blob:|d2miss:|d2:|d2css:|d2json:|d2asset:|d2raw:|d2svg:)/i.test(raw)) return raw;
+        if (/^node:/i.test(raw)) throw new Error('Node built-in module ' + raw + ' is used by ' + fromPath + '. This project requires its real Vite/Node build or a browser-compatible replacement.');
         const { query } = splitViteSpecifier(raw);
         const isLocal = specifierIsLocal(raw, aliases);
         if (isLocal) {
@@ -22644,11 +22906,16 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
         if (ast) {
           const replacements = [];
           walkAcornAst(ast, node => {
+            if (node.type === 'CallExpression' && node.callee?.type === 'Identifier' && node.callee.name === 'require') {
+              const request = node.arguments && node.arguments.length === 1 ? astLiteralString(node.arguments[0]) : null;
+              if (typeof request === 'string') throw new Error('CommonJS require("' + request + '") in ' + fromPath + ' cannot run in the isolated browser source preview. Use the project build or convert this module to ESM.');
+            }
             let literal = null;
             if ((node.type === 'ImportDeclaration' || node.type === 'ExportAllDeclaration' || node.type === 'ExportNamedDeclaration') && node.source) literal = node.source;
             else if (node.type === 'ImportExpression' && node.source) literal = node.source;
             if (!literal) return;
             const ref = astLiteralString(literal);
+            if (node.type === 'ImportExpression' && typeof ref !== 'string') throw new Error('Computed dynamic import in ' + fromPath + ' cannot be resolved by the source-preview fallback. Use the project Vite build.');
             if (typeof ref !== 'string') return;
             const next = replaceSpec(ref);
             if (next !== ref) replacements.push({ start: literal.start, end: literal.end, value: JSON.stringify(next) });
@@ -22731,7 +22998,7 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
     function transpileReactSource(transform, path, source, reactMajor = 18) {
       const ext = String(path || '').toLowerCase();
       const transforms = [];
-      if (/\.(ts|tsx)$/.test(ext)) transforms.push('typescript');
+      if (/\.(ts|tsx|mts|cts)$/.test(ext)) transforms.push('typescript');
       if (/\.(tsx|jsx)$/.test(ext) || /<[A-Za-z]/.test(source)) transforms.push('jsx');
       if (!transforms.length) return source;
       const legacy = reactMajor <= 16 && transforms.includes('jsx');
@@ -22904,6 +23171,7 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
           if (/\.(png|jpe?g|gif|webp|svg|bmp|ico|woff2?|ttf)$/i.test(norm)) modules['d2asset:' + norm] = assetModuleShim(norm, files);
           continue;
         }
+        if (/\.(?:scss|sass|less|styl)$/i.test(norm)) throw new Error('Stylesheet ' + norm + ' requires its Sass/Less/Stylus Vite plugin. Upload compiled CSS or use the full project build.');
         if (/\.css$/i.test(norm)) {
           modules['d2css:' + norm] = cssModuleShim(norm, files);
           continue;
@@ -23035,7 +23303,7 @@ var bootId = ${bootIdJson};
 var wantTw = ${tailwind ? 'true' : 'false'};
 var d2ExternalPackages = ${externalPackagesJson};
 function d2Need(m){var text=String(m||'');var lower=text.toLowerCase();var need='A deployable compiled output folder, or the missing file/dependency named above.';var marker='Missing file:';var i=text.indexOf(marker);if(i>=0){var tail=text.slice(i+marker.length);need='Needed file: '+tail.split(String.fromCharCode(10))[0].trim();}else if(d2ExternalPackages.length&&(lower.indexOf('failed to fetch dynamically imported module')>=0||lower.indexOf('networkerror')>=0||lower.indexOf('err_failed')>=0||lower.indexOf('data:text/javascript')>=0)){need='Needed project package'+(d2ExternalPackages.length>1?'s':'')+': '+d2ExternalPackages.join(', ')+'. Internet fallback is blocked or unavailable.';}else if(lower.indexOf('failed to fetch dynamically imported module')>=0||lower.indexOf('networkerror')>=0||lower.indexOf('err_failed')>=0){need='Needed: internet access for an uncommon project package, or upload the project’s compiled output folder.';}else{var phrases=['failed to resolve module specifier','cannot find module','cannot find package'];var found='';for(var p=0;p<phrases.length&&!found;p++){var pos=lower.indexOf(phrases[p]);if(pos>=0){var rest2=text.slice(pos+phrases[p].length).trim();var q2=rest2.charAt(0);if(q2==='"'||q2==="'"){var qend=rest2.indexOf(q2,1);found=qend>1?rest2.slice(1,qend):rest2.slice(1);}else found=rest2.split(' ')[0];}}if(found)need='Needed package/module: '+found;else if(lower.indexOf('process is not defined')>=0||lower.indexOf('require is not defined')>=0||lower.indexOf('__dirname is not defined')>=0||lower.indexOf('node:')>=0||lower.indexOf(' fs ')>=0)need='Needed: a real compiled browser build because this source uses Node-only behavior.';else if(lower.indexOf('fetch')>=0||lower.indexOf('network')>=0||lower.indexOf('internet')>=0||lower.indexOf('cdn')>=0||lower.indexOf('esm.sh')>=0||lower.indexOf('jsdelivr')>=0)need='Needed: internet access for the uncommon package named above, or upload the project’s compiled output folder.';}return need;}
-function d2Fail(e){var raw=String(e&&e.message||e);var m=raw;if(/Unexpected identifier .https/i.test(m))m='A project dependency returned invalid JavaScript. Check this package and its version: '+(d2ExternalPackages.join(', ')||raw.slice(0,120))+'. Upload a compiled build to open offline.';if((m.length>900||m.toLowerCase().indexOf('data:text/javascript')>=0)&&d2ExternalPackages.length){m='A project package could not load: '+d2ExternalPackages.join(', ')+'. Internet fallback is blocked or unavailable.';}else if(m.length>900){m='A generated preview module failed to run. Check Debooger for the related source or dependency finding.';}var safe=m.replace(/</g,'&lt;');var need=d2Need(raw).replace(/</g,'&lt;');document.body.style.background='#fff';document.body.innerHTML='<div style="padding:28px;max-width:620px;font-family:Inter,sans-serif;color:#0f172a"><h2 style="margin:0 0 8px;font-size:18px">Preview stopped</h2><p style="margin:0;color:#475569;line-height:1.5">'+safe+'</p><h3 style="margin:18px 0 6px;font-size:14px">What this project needs</h3><p style="margin:0;color:#475569;line-height:1.5">'+need+'</p></div>';try{parent.postMessage({type:"RUNTIME_ERROR",kind:"exception",message:m,previewGeneration:window.__D2_PREVIEW_GENERATION},"*");}catch(_){} }
+function d2Fail(e){var raw=String(e&&e.message||e);var stack=String(e&&e.stack||'');var name=String(e&&e.name||'Error');var m=raw;if(/Unexpected identifier .https/i.test(raw))m='Module JavaScript syntax error: '+raw+'. Reachable external packages: '+(d2ExternalPackages.join(', ')||'(none detected)')+'. This list is not proof of which module caused the error; inspect the error stack/network URL or build with the project lockfile.';if(m.length>900)m='Preview module failed: '+raw.slice(0,860)+'…';var safe=m.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');var need=d2Need(raw).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');document.body.style.background='#fff';document.body.innerHTML='<div style="padding:28px;max-width:620px;font-family:Inter,sans-serif;color:#0f172a"><h2 style="margin:0 0 8px;font-size:18px">Preview stopped</h2><p style="margin:0;color:#475569;line-height:1.5">'+safe+'</p><h3 style="margin:18px 0 6px;font-size:14px">What this project needs</h3><p style="margin:0;color:#475569;line-height:1.5">'+need+'</p></div>';try{parent.postMessage({type:"RUNTIME_ERROR",kind:"exception",message:m,stack:stack,errorName:name,phase:'react-module-bootstrap',previewGeneration:window.__D2_PREVIEW_GENERATION},"*");}catch(_){} }
 function d2Tw(){if(!wantTw)return;var tw=document.createElement("script");tw.type="module";tw.src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4";document.body.appendChild(tw);}
 import(bootId).then(function(){
   var attempts=0;
@@ -23291,7 +23559,7 @@ setTimeout(function(){if(document.documentElement.getAttribute("data-d2-mounted"
       const compiledEntry = findCompiledWebEntry();
       if (compiledEntry) return constructStaticHtmlBundle(compiledEntry);
       const sourceEntry = Object.keys(STATE.files).find(k => /(^|\/)(?:App|main|index)\.(?:tsx|jsx)$/i.test(k)) ||
-                          Object.keys(STATE.files).find(k => /\.(?:tsx|jsx)$/i.test(k));
+                          Object.keys(STATE.files).find(k => /\.(?:tsx|jsx|mts|cts|mjs|cjs)$/i.test(k));
       const sourceLabel = sourceEntry ? escapeHtml(sourceEntry) : 'No JSX/TSX entry file was resolved';
       return `<!DOCTYPE html>
 <html lang="en">
@@ -24536,7 +24804,7 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
           const leftoverId = [...cleanupText.matchAll(/id=["']([^"']+)["']/gi)].find(m => /(?:^|[-_.])(old|legacy|unused|tmp|temp|deprecated|backup)(?:[-_.]|$)/i.test(m[1] || ''));
           if (leftoverId) add('hidden-code', 'HTML id looks like leftover', path, leftoverId[0], 'Rename or delete this leftover block.');
         }
-        if (/\.(?:js|mjs|cjs|jsx|ts|tsx)$/i.test(path)) {
+        if (/\.(?:js|mjs|cjs|jsx|ts|tsx|mts|cts)$/i.test(path)) {
           const names = [...text.matchAll(/function\s+([A-Za-z_$][\w$]*)/g)].map(m => m[1]);
           const counts = {};
           names.forEach(n => { counts[n] = (counts[n] || 0) + 1; });
@@ -26618,7 +26886,6 @@ Use saved source hints only when marked exact or verified. If a marker has no sa
 
     function clearLoadedProject() {
       const hadProject = Object.keys(STATE.files || {}).length > 0;
-      clearProjectViewerExpiry();
 
       // Cancel any pending source-only React preview so an old project cannot repaint
       // the iframe after the user has deleted it.
@@ -26982,7 +27249,6 @@ Use saved source hints only when marked exact or verified. If a marker has no sa
       document.body.classList.add('has-project');
       document.getElementById('header-actions')?.classList.add('has-project');
       setProjectStatus('restored');
-      startProjectViewerExpiry();
       reRunAudit();
       buildSandboxLiveViewer();
       switchView('view-workspace');
@@ -27344,7 +27610,7 @@ load();
     <div class="b012-inline"><button type="button" class="b012-secondary" onclick="b012OpenCreateRepo()">Create repository</button><button type="button" class="b012-secondary" onclick="b012RefreshRepos()">Refresh list</button><button type="button" class="b012-secondary" onclick="b012OpenSettingsFromPublish()">Connection settings</button></div>
     <label for="b019-publish-target">Publish<select id="b019-publish-target" onchange="b012Status('b012-publish-preflight',b012PublishSummary())"><option value="viewer">Debooger website (root index.html)</option><option value="project">Loaded static website</option><option value="archive">ZIP / files → repository (unzip and commit)</option></select></label><div class="b012-inline" id="b026-archive-picker" style="align-items:center;flex-wrap:wrap;gap:8px"><label for="b026-publish-files" class="b012-secondary" style="cursor:pointer;padding:8px 12px">Choose ZIP / files</label><input type="file" id="b026-publish-files" accept=".zip,.html,.htm,.css,.js,.jsx,.ts,.tsx,.json,.png,.jpg,.jpeg,.svg,.webp,.woff,.woff2,.pdf,.md,.txt" multiple style="position:absolute;left:-9999px" onchange="b012Status('b012-publish-preflight',b012PublishSummary())"><span class="b012-muted">All files unpacked; one commit</span></div>
     <div id="b012-publish-preflight" class="b012-status">Load an HTML file, ZIP or complete website project before publishing.</div>
-    <p class="b012-muted">Publishes unzipped files to main in one commit without deleting unrelated files. A website needs a built index.html; a source ZIP is uploaded as source files, not a runnable Pages build. Never upload secrets. No upload starts until Publish.</p>
+    <p class="b012-muted">Publishes unzipped files to main in one commit without deleting unrelated files. React source preview is best-effort only; use the real production build output for deployment. A source ZIP is not a runnable Pages build. Private .env/key files and common credentials are blocked before upload. No upload starts until Publish.</p>
     <button type="button" id="b005-deploy-now" class="b012-primary" onclick="b005DeployPages()">Publish</button>
     <div id="b005-pages-status" class="b012-status" role="status" aria-live="polite"></div>
     <div id="b005-pages-result" class="b012-result"></div>
@@ -27560,7 +27826,7 @@ load();
       const mode = b012El('b019-publish-target')?.value || 'viewer';
       const picker = b012El('b026-archive-picker');
       if (picker) picker.hidden = mode !== 'archive';
-      if (mode === 'viewer') return 'Publishes the complete Debooger B026 application as root index.html. Public URL ends in /deboog/.';
+      if (mode === 'viewer') return 'Publishes the complete Debooger B029 application as root index.html. Public URL follows the selected repository.';
       if (mode === 'archive') {
         const selection = [...(b012El('b026-publish-files')?.files || [])];
         return selection.length ? selection.length + ' archive/file selection(s). ZIPs are extracted and uploaded as separate files in ONE Git commit. Existing unrelated files remain unchanged.' : 'Choose one or more ZIP archives or files to commit to the selected repository.';
@@ -27575,9 +27841,9 @@ load();
     function b012PublishFiles() {
       if (b012El('b019-publish-target')?.value === 'viewer') {
         // The entire self-contained Debooger application IS the index file.
-        // Input .value and in-memory GitHub credentials are never copied into markup.
-        const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-        if (!html.includes('DEBOOGER2000') || !html.includes('B026')) throw new Error('Could not prepare Debooger B026 for upload.');
+        // Publish the pristine startup template, never the mutable runtime DOM.
+        const html = D2_PUBLISH_SOURCE_HTML;
+        if (!html || !html.includes('DEBOOGER2000') || !html.includes('B029')) throw new Error('Could not prepare Debooger B029 for upload.');
         if (/(?:github_pat_|ghp_)[A-Za-z0-9_]{24,}/.test(html)) throw new Error('Possible embedded GitHub token found; publishing was blocked.');
         return { entries:[{path:'index.html',content:b005ToBase64(html)}], omitted:0, rewritten:false };
       }
@@ -27625,6 +27891,20 @@ load();
         if (archivePathIsUnsafe(item.path) || /[\x00-\x1f]/.test(item.path)) throw new Error('Unsafe file path: '+item.path);
         if (seen.has(item.path.toLowerCase())) throw new Error('Duplicate file path: '+item.path);
         seen.add(item.path.toLowerCase());
+        const leaf = String(item.path || '').split('/').pop().toLowerCase();
+        if ((/^\.env(?:\..*)?$/.test(leaf) && !/^\.env\.(?:example|sample|template|schema|dist)$/.test(leaf)) || /^(?:id_rsa|id_ed25519|server\.key)$/.test(leaf) || /\.(?:pem|p12|pfx)$/i.test(leaf)) {
+          throw new Error('Sensitive environment or private-key file blocked from publishing: ' + item.path);
+        }
+        let text = String(item.content || '');
+        if (text && /^[A-Za-z0-9+/]+={0,2}$/.test(text) && text.length % 4 === 0) {
+          try { const decoded = new TextDecoder().decode(decodeBase64ToUint8Array(text)); if (!decoded.includes('\u0000')) text = decoded; } catch (_) {}
+        }
+        const credentialPatterns = [
+          /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/i,
+          /\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|AKIA[0-9A-Z]{16})\b/,
+          /\b(?:SUPABASE_SERVICE_ROLE_KEY|DATABASE_URL|STRIPE_SECRET_KEY|OPENAI_API_KEY|AWS_SECRET_ACCESS_KEY)\s*[:=]\s*["'](?!example|placeholder|changeme|your[_ -])[^"'\r\n]{12,}["']/i
+        ];
+        if (credentialPatterns.some(pattern => pattern.test(text))) throw new Error('Credential-like value blocked from publishing in ' + item.path + '. Remove the secret; its value was not displayed.');
         const size = Math.floor(item.content.length * 3 / 4);
         if (size > 90*1024*1024) throw new Error('File above 90 MB cannot be uploaded through this browser GitHub API method: '+item.path);
         total += size;
@@ -27720,7 +28000,7 @@ load();
       await Promise.all(Array.from({ length:Math.min(5, files.length) }, worker));
       const tree = await b012GithubApi(root + '/git/trees', { method:'POST', body:{ base_tree:commit.tree.sha, tree:blobs } });
       if (!tree?.sha) throw new Error('GitHub did not confirm the new file tree.');
-      const created = await b012GithubApi(root + '/git/commits', { method:'POST', body:{ message:'Publish website from DEBOOGER2000 B026', tree:tree.sha, parents:[ref.object.sha] } });
+      const created = await b012GithubApi(root + '/git/commits', { method:'POST', body:{ message:'Publish website from DEBOOGER2000 B029', tree:tree.sha, parents:[ref.object.sha] } });
       if (!created?.sha) throw new Error('GitHub did not confirm the commit.');
       await b012GithubApi(root + '/git/refs/heads/main', {method:'PATCH', body:{sha:created.sha,force:false} });
       const verified = await b012GithubApi(root + '/git/ref/heads/main');
@@ -27736,8 +28016,7 @@ load();
         onStep('Enabling GitHub Pages from main / root…');
         await b012GithubApi(root+'/pages',{method:'POST',body:{source:settings.source}});
       } else if (pages.build_type!=='legacy' || pages.source?.branch!=='main' || pages.source?.path!=='/') {
-        onStep('Setting GitHub Pages to main / root…');
-        await b012GithubApi(root+'/pages',{method:'PUT',body:settings});
+        throw new Error('Existing GitHub Pages source was left unchanged. Configure Settings → Pages → Deploy from a branch → main / (root), then retry.');
       }
       const confirmed=await b012GithubApi(root+'/pages');
       if(confirmed?.build_type!=='legacy' || confirmed.source?.branch!=='main' || confirmed.source?.path!=='/') throw new Error('GitHub did not confirm Pages from main / root. Change Settings → Pages → Deploy from a branch → main / (root).');
@@ -27847,6 +28126,7 @@ load();
           }
         };
         await Promise.all(Array.from({length:Math.min(5, leaves.length)}, worker));
+        if (Object.keys(STATE.files || {}).length) saveAuditToHistory();
         STATE.files = imported;
         STATE.projectName = repo.name;
         STATE.entryFile = Object.keys(imported).find(k => /(^|\/)index\.html?$/i.test(k)) || Object.keys(imported).find(k => /\.html?$/i.test(k)) || Object.keys(imported)[0];
