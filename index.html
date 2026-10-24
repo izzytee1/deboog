@@ -22910,16 +22910,6 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
       });
     }
 
-    function sealImportSpecifiers(code, replaceSpec) {
-      return String(code || '').replace(/(\bfrom\s*|\bimport\s*\(\s*|\bimport\s+)(['"])([^'"\n]+)\2/g, (full, lead, q, spec) => {
-        if (/^(?:https?:|data:|blob:|d2miss:|d2stub:|d2:|d2css:|d2json:|d2asset:|d2raw:|d2svg:)/i.test(spec)) return full;
-        const next = replaceSpec(spec);
-        if (!next || next === spec) return full;
-        const quote = next.includes(q) ? (q === '"' ? "'" : '"') : q;
-        return lead + quote + next + quote;
-      });
-    }
-
     function bareAliasKeys(filePath, aliases) {
       const keys = new Set();
       const norm = normalizeVirtualPath(filePath);
@@ -22941,53 +22931,56 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
       return [...keys];
     }
 
-    function rewriteModuleSpecifiers(code, fromPath, files, pkg, aliases, collectedCss) {
-      const replaceSpec = (spec) => {
-        const raw = String(spec || '').trim();
-        if (!raw || /^(?:https?:|data:|blob:|d2miss:|d2:|d2css:|d2json:|d2asset:|d2raw:|d2svg:)/i.test(raw)) return raw;
-        if (/^node:/i.test(raw)) throw new Error('Node built-in module ' + raw + ' is used by ' + fromPath + '. This project requires its real Vite/Node build or a browser-compatible replacement.');
-        const { query } = splitViteSpecifier(raw);
-        const isLocal = specifierIsLocal(raw, aliases);
-        if (isLocal) {
-          const local = resolveReactLocal(raw, fromPath, files, aliases);
-          if (!local) return 'd2miss:' + encodeURIComponent(raw.split('?')[0]);
-          return localPreviewModuleId(local, query, collectedCss);
-        }
-        return d2PreviewPackageSpecifier(raw.split('?')[0], pkg);
-      };
-      const original = String(code || '');
-      if (globalThis.acorn && typeof globalThis.acorn.parse === 'function') {
-        let ast = null;
-        try { ast = globalThis.acorn.parse(original, { ecmaVersion: 'latest', sourceType: 'module', allowHashBang: true }); }
-        catch (_) { ast = null; }
-        if (ast) {
-          const replacements = [];
-          walkAcornAst(ast, node => {
-            if (node.type === 'CallExpression' && node.callee?.type === 'Identifier' && node.callee.name === 'require') {
-              const request = node.arguments && node.arguments.length === 1 ? astLiteralString(node.arguments[0]) : null;
-              if (typeof request === 'string') throw new Error('CommonJS require("' + request + '") in ' + fromPath + ' cannot run in the isolated browser source preview. Use the project build or convert this module to ESM.');
+    function rewriteModuleSpecifiers(code, fromPath, files, pkg, aliases, collectedCss, moduleImports, externalImports) {
+      const replaceSpec = spec => {
+        const raw=String(spec||'').trim();
+        if(!raw||/^(?:https?:|data:|blob:|d2:|d2css:|d2json:|d2asset:|d2raw:|d2svg:)/i.test(raw))return raw;
+        if(/^node:/i.test(raw))throw new Error('Node module '+raw+' in '+fromPath+' requires a real browser build.');
+        const {query}=splitViteSpecifier(raw);
+        if(specifierIsLocal(raw,aliases)){
+          const local=resolveReactLocal(raw,fromPath,files,aliases);
+          if(!local){
+            const missing=raw.split('?')[0];
+            if(/\.(?:png|jpe?g|gif|webp|svg|bmp|ico)$/i.test(missing)){
+              addConsoleLog('warn','[REACT] Missing optional image in '+fromPath+': '+missing+'. Restore it for full appearance.');
+              return d2ModuleDataUrl('export default "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";');
             }
-            let literal = null;
-            if ((node.type === 'ImportDeclaration' || node.type === 'ExportAllDeclaration' || node.type === 'ExportNamedDeclaration') && node.source) literal = node.source;
-            else if (node.type === 'ImportExpression' && node.source) literal = node.source;
-            if (!literal) return;
-            const ref = astLiteralString(literal);
-            if (node.type === 'ImportExpression' && typeof ref !== 'string') throw new Error('Computed dynamic import in ' + fromPath + ' cannot be resolved by the source-preview fallback. Use the project Vite build.');
-            if (typeof ref !== 'string') return;
-            const next = replaceSpec(ref);
-            if (next !== ref) replacements.push({ start: literal.start, end: literal.end, value: JSON.stringify(next) });
-          });
-          let rewritten = original;
-          replacements.sort((a,b) => b.start - a.start).forEach(change => {
-            rewritten = rewritten.slice(0, change.start) + change.value + rewritten.slice(change.end);
-          });
-          return sealImportSpecifiers(rewritten, replaceSpec);
+            throw new Error('React import failed in '+fromPath+': missing local file '+missing+'. Restore the file or correct its import path.');
+          }
+          const id=localPreviewModuleId(local,query,collectedCss);
+          if(moduleImports)moduleImports.add(id);
+          return id;
         }
-      }
-      return sealImportSpecifiers(original
-        .replace(/\bfrom\s*(['"])([^'"]+)\1/g, (m, q, spec) => 'from ' + q + replaceSpec(spec) + q)
-        .replace(/\bimport\s*(['"])([^'"]+)\1/g, (m, q, spec) => 'import ' + q + replaceSpec(spec) + q)
-        .replace(/\bimport\s*\(\s*(['"])([^'"]+)\1/g, (m, q, spec) => 'import(' + q + replaceSpec(spec) + q), replaceSpec);
+        if(externalImports&&!d2EmbeddedReactSpecifier(raw)&&!/^@fontsource(?:-variable)?\//i.test(raw))externalImports.add(raw.split('?')[0]);
+        return d2PreviewPackageSpecifier(raw.split('?')[0],pkg);
+      };
+      const original=String(code||'');
+      if(!globalThis.acorn||typeof globalThis.acorn.parse!=='function')throw new Error('Module parser unavailable while opening '+fromPath+'. Reload Debooger or use compiled output.');
+      let ast;
+      try{ast=globalThis.acorn.parse(original,{ecmaVersion:'latest',sourceType:'module',allowHashBang:true});}
+      catch(err){throw new Error('Compiled JavaScript syntax error in '+fromPath+': '+String(err.message||err));}
+      const changes=[];
+      walkAcornAst(ast,node=>{
+        if(node.type==='CallExpression'&&node.callee?.type==='Identifier'&&node.callee.name==='require'){
+          const value=node.arguments?.length===1?astLiteralString(node.arguments[0]):null;
+          if(typeof value==='string')throw new Error('CommonJS require("'+value+'") in '+fromPath+' requires the original project build.');
+        }
+        let literal=null;
+        if((node.type==='ImportDeclaration'||node.type==='ExportAllDeclaration'||node.type==='ExportNamedDeclaration')&&node.source)literal=node.source;
+        else if(node.type==='ImportExpression'&&node.source)literal=node.source;
+        if(!literal)return;
+        const ref=astLiteralString(literal);
+        if(node.type==='ImportExpression'&&typeof ref!=='string')throw new Error('Computed dynamic import in '+fromPath+' requires a real project build.');
+        if(typeof ref!=='string')return;
+        const replacement=replaceSpec(ref);
+        if(replacement!==ref)changes.push({start:literal.start,end:literal.end,text:JSON.stringify(replacement)});
+      });
+      changes.sort((a,b)=>b.start-a.start);
+      let result=original;
+      for(const edit of changes)result=result.slice(0,edit.start)+edit.text+result.slice(edit.end);
+      try{globalThis.acorn.parse(result,{ecmaVersion:'latest',sourceType:'module',allowHashBang:true});}
+      catch(err){throw new Error('Invalid generated JavaScript in '+fromPath+': '+String(err.message||err));}
+      return result;
     }
 
     async function loadSucraseTransformer() {
@@ -23148,35 +23141,6 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
       });
     }
 
-    function collectReactExternalPackages(files, aliases, visitedPaths) {
-      const found = new Set();
-      const pkg = readProjectPackageJson(files).pkg || {};
-      const canUseEmbeddedReact = d2EmbeddedReactSupported(pkg);
-      Object.entries(files || {}).forEach(([path, file]) => {
-        if (!file || file.binary || !/\.(?:mjs|cjs|js|jsx|ts|tsx)$/i.test(path) || /(?:^|\/)(?:node_modules|dist|build|out)(?:\/|$)/i.test(path)) return;
-        // Only dependencies reached from the real HTML entry belong to the preview.
-        // Scripts, test fixtures, and archived copies must not pollute runtime diagnostics.
-        if (visitedPaths && !visitedPaths.has(normalizeVirtualPath(path))) return;
-        if (/(?:^|\/)(?:vite\.config|vitest\.config|tailwind\.config|postcss\.config|eslint\.config)(?:\.[^/]+)?$/i.test(path)) return;
-        const source = getVirtualFileText(file);
-        const refs = [];
-        source.replace(/\b(?:from|import)\s*(?:\(\s*)?["']([^"'\n]+)["']/g, (_, spec) => { refs.push(spec); return _; });
-        source.replace(/\brequire\s*\(\s*["']([^"'\n]+)["']\s*\)/g, (_, spec) => { refs.push(spec); return _; });
-        refs.forEach(spec => {
-          const raw = String(spec || '').split('?')[0].trim();
-          if (!raw || specifierIsLocal(raw, aliases) || /^(?:https?:|data:|blob:)/i.test(raw)) return;
-          if (/^@fontsource(?:-variable)?\/[^/]+\/[^/]+\.css$/i.test(raw)) return;
-          if (d2EmbeddedReactSpecifier(raw)) {
-            if (canUseEmbeddedReact) return;
-            found.add(raw.startsWith('react-dom') ? 'react-dom' : raw.startsWith('react') ? 'react' : raw);
-            return;
-          }
-          found.add(raw);
-        });
-      });
-      return [...found].sort();
-    }
-
     async function buildLiveReactPreviewHtml(files = STATE.files) {
       const compiled = findCompiledWebEntry(files);
       if (compiled) return constructStaticHtmlBundle(compiled);
@@ -23187,6 +23151,7 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
       const sucrase = await loadSucraseTransformer();
       const env = collectEnvFromFiles(files);
       const collectedCss = new Set();
+      const reachablePackages = new Set();
       const modules = {};
       const seen = new Set();
       const queue = [found.entry];
@@ -23246,13 +23211,9 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
         source = expandImportMetaGlob(source, norm, files, aliases);
         source = rewriteImportMetaUrls(source, norm, files, aliases);
         source = rewriteEnvAndMeta(source, env);
-        source = rewriteModuleSpecifiers(source, norm, files, pkg, aliases, collectedCss);
-        [...source.matchAll(/['"]((?:d2miss|d2|d2css|d2json|d2asset|d2raw|d2svg):[^'"]+)['"]/g)].forEach(m => {
-          if (m[1].startsWith('d2miss:')) {
-            throw new Error('React dependency resolution failed in ' + norm + ': missing local file ' + decodeURIComponent(m[1].slice(7)) + '. Check the import path and ZIP contents.');
-          }
-          enqueue(m[1]);
-        });
+        const moduleImports = new Set();
+        source = rewriteModuleSpecifiers(source, norm, files, pkg, aliases, collectedCss, moduleImports, reachablePackages);
+        moduleImports.forEach(enqueue);
         modules['d2:' + norm] = source;
       }
 
@@ -23266,7 +23227,7 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
         }
       });
 
-      const externalPackages = collectReactExternalPackages(files, aliases, seen);
+      const externalPackages = [...reachablePackages].sort();
       const declaredReactVersion = npmVersion(pkg, 'react', D2_EMBEDDED_REACT_VERSION);
       if (!useEmbeddedReact) addConsoleLog('info', '[REACT] React ' + declaredReactVersion + ' requires its version-matched network runtime or a compiled build. Offline React 18 will not be substituted.');
       const entryId = 'd2:' + normalizeVirtualPath(found.entry);
@@ -23360,7 +23321,7 @@ var bootId = ${bootIdJson};
 var wantTw = ${tailwind ? 'true' : 'false'};
 var d2ExternalPackages = ${externalPackagesJson};
 function d2Need(m){var text=String(m||'');var lower=text.toLowerCase();var need='A deployable compiled output folder, or the missing file/dependency named above.';var marker='Missing file:';var i=text.indexOf(marker);if(i>=0){var tail=text.slice(i+marker.length);need='Needed file: '+tail.split(String.fromCharCode(10))[0].trim();}else if(d2ExternalPackages.length&&(lower.indexOf('failed to fetch dynamically imported module')>=0||lower.indexOf('networkerror')>=0||lower.indexOf('err_failed')>=0||lower.indexOf('data:text/javascript')>=0)){need='Needed project package'+(d2ExternalPackages.length>1?'s':'')+': '+d2ExternalPackages.join(', ')+'. Internet fallback is blocked or unavailable.';}else if(lower.indexOf('failed to fetch dynamically imported module')>=0||lower.indexOf('networkerror')>=0||lower.indexOf('err_failed')>=0){need='Needed: internet access for an uncommon project package, or upload the project’s compiled output folder.';}else{var phrases=['failed to resolve module specifier','cannot find module','cannot find package'];var found='';for(var p=0;p<phrases.length&&!found;p++){var pos=lower.indexOf(phrases[p]);if(pos>=0){var rest2=text.slice(pos+phrases[p].length).trim();var q2=rest2.charAt(0);if(q2==='"'||q2==="'"){var qend=rest2.indexOf(q2,1);found=qend>1?rest2.slice(1,qend):rest2.slice(1);}else found=rest2.split(' ')[0];}}if(found)need='Needed package/module: '+found;else if(lower.indexOf('process is not defined')>=0||lower.indexOf('require is not defined')>=0||lower.indexOf('__dirname is not defined')>=0||lower.indexOf('node:')>=0||lower.indexOf(' fs ')>=0)need='Needed: a real compiled browser build because this source uses Node-only behavior.';else if(lower.indexOf('fetch')>=0||lower.indexOf('network')>=0||lower.indexOf('internet')>=0||lower.indexOf('cdn')>=0||lower.indexOf('esm.sh')>=0||lower.indexOf('jsdelivr')>=0)need='Needed: internet access for the uncommon package named above, or upload the project’s compiled output folder.';}return need;}
-function d2Fail(e){var raw=String(e&&e.message||e);var stack=String(e&&e.stack||'');var name=String(e&&e.name||'Error');var m=raw;if(/Unexpected identifier .https/i.test(raw))m='Module JavaScript syntax error: '+raw+'. Reachable external packages: '+(d2ExternalPackages.join(', ')||'(none detected)')+'. This list is not proof of which module caused the error; inspect the error stack/network URL or build with the project lockfile.';if(m.length>900)m='Preview module failed: '+raw.slice(0,860)+'…';var safe=m.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');var need=d2Need(raw).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');document.body.style.background='#fff';document.body.innerHTML='<div style="padding:28px;max-width:620px;font-family:Inter,sans-serif;color:#0f172a"><h2 style="margin:0 0 8px;font-size:18px">Preview stopped</h2><p style="margin:0;color:#475569;line-height:1.5">'+safe+'</p><h3 style="margin:18px 0 6px;font-size:14px">What this project needs</h3><p style="margin:0;color:#475569;line-height:1.5">'+need+'</p></div>';try{parent.postMessage({type:"RUNTIME_ERROR",kind:"exception",message:m,stack:stack,errorName:name,phase:'react-module-bootstrap',previewGeneration:window.__D2_PREVIEW_GENERATION},"*");}catch(_){} }
+function d2Fail(e){var raw=String(e&&e.message||e);var stack=String(e&&e.stack||'');var name=String(e&&e.name||'Error');var m=raw;if(/Unexpected identifier .https/i.test(raw))m='Module JavaScript syntax error: '+raw+'. Inspect the affected module and stack. Unrelated package names are not evidence of the cause.';if(m.length>900)m='Preview module failed: '+raw.slice(0,860)+'…';var safe=m.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');var need=d2Need(raw).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');document.body.style.background='#fff';document.body.innerHTML='<div style="padding:28px;max-width:620px;font-family:Inter,sans-serif;color:#0f172a"><h2 style="margin:0 0 8px;font-size:18px">Preview stopped</h2><p style="margin:0;color:#475569;line-height:1.5">'+safe+'</p><h3 style="margin:18px 0 6px;font-size:14px">What this project needs</h3><p style="margin:0;color:#475569;line-height:1.5">'+need+'</p></div>';try{parent.postMessage({type:"RUNTIME_ERROR",kind:"exception",message:m,stack:stack,errorName:name,phase:'react-module-bootstrap',previewGeneration:window.__D2_PREVIEW_GENERATION},"*");}catch(_){} }
 function d2Tw(){if(!wantTw)return;var tw=document.createElement("script");tw.type="module";tw.src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4";document.body.appendChild(tw);}
 import(bootId).then(function(){
   var attempts=0;
