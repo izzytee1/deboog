@@ -566,7 +566,7 @@
     }
   }
 
-  body:not(.project-valid) [data-project-action] { display:none !important; }
+  body:not(.project-valid) [data-project-action] { visibility:visible !important; }
   @media (max-width:900px) {
     html,body { min-height:100dvh; overscroll-behavior:none;  }
     .top-nav { display:none; }
@@ -594,7 +594,7 @@
     #workspace-more-menu.tools-modal {     }
     .tools-modal-grid { grid-template-columns:1fr; gap:8px; }
     .design-learning-strip,.design-guide-grid { grid-template-columns:1fr; }
-    body:not(.project-valid) .mobile-primary-nav [data-requires-project] { opacity:.38; pointer-events:none; }
+    body:not(.project-valid) .mobile-primary-nav [data-requires-project] { opacity:1; pointer-events:auto; }
     body.mobile-shell-v28 .workspace-pane-left { display:none !important; }
     body.mobile-shell-v28.workspace-view-active.files-sheet-open .workspace-pane-left {
       display:flex !important; position:fixed !important; inset:max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)) 8px !important;
@@ -19716,7 +19716,7 @@ codePos,
     }
 
     function openFilesSheet() {
-      if (!projectIsValid() && STATE.projectStatus !== 'restored') return;
+      if (!Object.keys(STATE.files || {}).length) { showToast('No project files loaded.'); return; }
       closeWorkspacePopovers();
       document.body.classList.add('files-sheet-open');
       const pane = document.querySelector('.workspace-pane-left');
@@ -20017,7 +20017,7 @@ codePos,
     })();
 
     function switchView(viewId) {
-      if (viewId === 'view-workspace' && !projectIsValid() && STATE.projectStatus !== 'restored' && !(STATE.projectStatus === 'loading' && STATE.entryFile && STATE.files?.[STATE.entryFile])) viewId = 'view-home';
+      if (viewId === 'view-workspace' && !Object.keys(STATE.files || {}).length && STATE.projectStatus !== 'restored') viewId = 'view-home';
       STATE.activeView = viewId;
       scheduleWorkspaceSave(500);
       document.querySelectorAll('[data-desktop-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.desktopView===viewId));
