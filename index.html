@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-  <title>DEBOOGER2000 | Visual Project Viewer & Inspector — DB2K-001</title>
-  <!-- DEBOOGER2000 DB2K-001: standalone visual project viewer, inspector, auditor, and exporter. -->
+  <title>DEBOOGER2000 | Visual Project Viewer & Inspector — DB2K-002</title>
+  <!-- DEBOOGER2000 DB2K-002: standalone visual project viewer, inspector, auditor, and exporter. -->
   <!-- Bundled ZIP engine: JSZip 3.10.1 (MIT/GPLv3 dual licensed; upstream license notice retained below). -->
   
   
@@ -632,7 +632,7 @@ header{height:60px!important;background:rgba(255,255,255,.94)!important;border-b
 
 
 /* D2 Classic keeps v31 font, palette, and desktop labels; only new features below. */
-#d2-preview-status{position:absolute;z-index:9;left:50%;bottom:22px;transform:translateX(-50%);width:max-content;max-width:min(560px,calc(100% - 28px));padding:10px 14px;background:#fff;color:#475569;border:1px solid #cbd5e1;border-radius:7px;box-shadow:0 4px 18px rgba(15,23,42,.12);font-size:12px;text-align:center;pointer-events:none}
+#d2-preview-status{position:absolute;z-index:9;left:12px;right:12px;bottom:12px;transform:none;width:auto;max-width:760px;max-height:32%;overflow-y:auto;overflow-wrap:anywhere;padding:10px 12px;background:#fff;color:#475569;border:1px solid #cbd5e1;border-radius:7px;box-shadow:0 4px 18px rgba(15,23,42,.12);font-size:12px;line-height:1.5;text-align:left;pointer-events:auto}
 #d2-preview-status[hidden]{display:none!important}#d2-preview-status.d2-preview-failed{color:#9f1239;border-color:#fda4af}
 #d2-ai-chat{border:1px solid #cbd5e1;padding:0;background:#fff;color:#152238;box-shadow:0 18px 60px rgba(15,23,42,.26);}#d2-ai-chat::backdrop{background:rgba(15,23,42,.4)}#d2-ai-chat[open]{}.d2-chat-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;border-bottom:1px solid #e2e8f0}.d2-chat-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:12px 16px;border-bottom:1px solid #e2e8f0}.d2-chat-settings label{display:flex;flex-direction:column;gap:4px;font-size:12px}.d2-chat-settings input,.d2-chat-settings select{min-width:0;width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#152238}.d2-chat-disclaimer{grid-column:1/-1;font-size:11px;color:#64748b}#d2-ai-messages{flex:1;min-height:0;overflow:auto;padding:14px 16px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}#d2-ai-messages>div{padding:9px 10px;margin:0 0 8px;border:1px solid #e2e8f0;border-radius:7px}#d2-ai-send-form{display:flex;gap:8px;padding:12px;border-top:1px solid #e2e8f0}#d2-ai-query{flex:1;min-height:60px;max-height:130px;resize:vertical;padding:8px;border:1px solid #cbd5e1;border-radius:6px;color:#152238;background:#fff}#d2-ai-chat button{background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:7px 10px;color:#152238;cursor:pointer}#d2-ai-submit{align-self:end!important;background:#087f6e!important;color:#fff!important}
 @media(max-width:900px){.d2-chat-settings{grid-template-columns:1fr}#d2-ai-chat{}.top-nav{overflow-x:auto;scrollbar-width:none;justify-content:flex-start}.top-nav::-webkit-scrollbar{display:none}}
@@ -1049,8 +1049,7 @@ body.workspace-view-active .topbar-logo{display:flex!important}
 .audit-nav-count{display:none;align-items:center;justify-content:center;min-width:16px;height:16px;margin-left:4px;padding:0 4px;border-radius:5px;font-size:10px;font-weight:700;line-height:1;vertical-align:middle}
 body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-good{background:#dcfce7;color:#067647}.audit-nav-count.audit-warn{background:#fff0cc;color:#a66700}.audit-nav-count.audit-bad{background:#fee2e2;color:#b42318}
 .audit-premium-score{padding:16px 20px!important;align-items:center!important;gap:15px!important;border-bottom:1px solid #e8edf2!important}
-.audit-premium-score #health-gauge{display:grid!important;place-items:center;width:74px!important;height:74px!important;flex:0 0 74px!important;border:5px solid #cbd5e1!important;border-radius:50%!important;font-size:18px!important;font-weight:650!important;line-height:1.15;text-align:center;color:#334155;white-space:normal}
-.audit-premium-score #health-gauge.score-good{border-color:#13a474!important}.audit-premium-score #health-gauge.score-warn{border-color:#e6a740!important}.audit-premium-score #health-gauge.score-bad{border-color:#d85757!important}
+.audit-premium-score #health-gauge{display:block!important;min-width:70px!important;width:auto!important;height:auto!important;flex:0 0 auto!important;border:0!important;border-radius:0!important;padding:0!important;color:#0f172a!important;background:transparent!important;font-size:26px!important;font-weight:600!important;line-height:1.1!important;text-align:left!important;white-space:nowrap!important}
 .audit-score-copy{min-width:0}.audit-score-copy h4{font-size:15px!important;font-weight:650!important;margin:0!important}.audit-score-copy p{margin:4px 0 0!important;font-size:12px!important;color:#64748b!important}
 .audit-issues-title{padding:15px 20px 8px!important}.audit-issues-title h3{font-size:14px!important}.audit-issues-title h3 span{font-weight:500;color:#64748b}.audit-text-action{background:transparent!important;border:0!important;min-height:25px!important;padding:0!important;color:#087f6e!important;font-size:12px!important;font-weight:600!important}
 .workspace-pane-right .b006-audit-filters{padding:4px 18px 10px!important;gap:14px!important;flex-wrap:nowrap!important;overflow-x:auto!important}.workspace-pane-right .b006-audit-filters button{background:transparent!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0!important;padding:6px 1px!important;white-space:nowrap!important;font-size:12px!important}.workspace-pane-right .b006-audit-filters button.active{color:#087f6e!important;border-bottom-color:#087f6e!important}
@@ -1075,6 +1074,22 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
 .db2k-compare-panels iframe{height:min(47vh,460px);width:100%;border:1px solid #cbd5e1;background:#fff}
 .db2k-compare-list{background:#fff;padding:10px;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.5 Inter,system-ui,sans-serif;max-height:230px;overflow:auto;border:1px solid #e2e8f0;border-radius:6px}
 @media(max-width:700px){.db2k-compare-panels{grid-template-columns:1fr}.db2k-compare-panels iframe{height:270px}}
+
+/* DB2K-002: continuous audit and one file manager; no score badge. */
+.audit-premium-score{padding:14px 18px!important;gap:14px!important}
+.audit-inline-notes:empty,.audit-file-scores:empty{display:none}
+.audit-inline-notes{padding:0 18px;background:transparent;border:0}
+.audit-support-line{padding:9px 18px;color:#64748b;font-size:12px;line-height:1.5}
+.audit-file-scores{padding:0 18px 8px;max-height:190px;overflow:auto;font-size:12px}
+.workspace-pane-right .finding-card{background:transparent!important;box-shadow:none!important;border-radius:0!important}
+.workspace-pane-right .finding-card[open]{background:transparent!important}
+.workspace-pane-right .b006-finding-body{padding:2px 0 15px!important}
+.workspace-pane-right .b006-finding-body .b006-evidence{display:block;white-space:pre-wrap;overflow-wrap:anywhere;max-height:200px;overflow:auto;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;color:#475569;border:0;background:#f8fafc;padding:8px 10px;border-radius:5px}
+#audit-console-details{margin:14px 18px!important;border:0!important;border-top:1px solid #e2e8f0!important;border-radius:0!important;background:transparent!important}
+#audit-console-details>summary{font-weight:600;font-size:12px;padding:12px 0!important}
+.mobile-viewer-delete{display:inline-flex;align-items:center;justify-content:center;min-width:38px;color:#b42318;background:#fff;border:1px solid #dbe4ee;border-radius:7px}
+body.workspace-view-active #btn-top-trash{display:inline-flex!important;align-items:center}
+@media(min-width:901px){.mobile-viewer-delete{display:none!important}}
 </style>
 </head>
 <body class="mobile-shell-v28 project-empty">
@@ -1088,7 +1103,7 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         <div class="topbar-logo">
           <div class="logo-mark">D2</div>
           <div class="logo-text">DEBOOGER<span style="color:var(--primary)">2000</span></div>
-          <span class="build-mark" aria-label="Build DB2K-001">DB2K-001</span>
+          <span class="build-mark" aria-label="Build DB2K-002">DB2K-002</span>
         </div>
       </div>
       <nav class="top-nav" aria-label="Main">
@@ -1124,10 +1139,10 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
             <button type="button" id="btn-panoramic" aria-pressed="false" onclick="togglePanoramicPreview()">Full</button>
           </div>
         </div>
-        <details class="more-tools-section" id="more-tools-details">
+        <details class="more-tools-section" id="more-tools-details" open>
           <summary>Tools <span>Project, build, compare and AI</span></summary>
           <div class="more-tools-list">
-            <button type="button" onclick="toggleWorkspaceDrawer('files');closeWorkspacePopovers()">Project files</button>
+            <button type="button" onclick="toggleWorkspaceDrawer('files');closeWorkspacePopovers()">Files</button>
             <button type="button" onclick="triggerOpenMenu();closeWorkspacePopovers()">Add files</button>
             <button type="button" onclick="openSelectedFileEditor();closeWorkspacePopovers()">Edit source</button>
             <button type="button" onclick="promptRenameSelectedFile();closeWorkspacePopovers()">Rename file</button>
@@ -1155,7 +1170,7 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         <div class="workspace-correction-list" id="workspace-correction-list"></div>
       </div>
       <div class="header-actions" id="header-actions">
-        <button type="button" class="workspace-icon-btn project-only-action workspace-delete-btn" id="btn-top-trash" onclick="clearLoadedProject()" title="Delete loaded project" aria-label="Delete loaded project"><svg class="top-trash-icon" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v7M14 11v7"/></svg></button>
+        <button type="button" class="workspace-icon-btn project-only-action workspace-delete-btn" id="btn-top-trash" onclick="clearLoadedProject()" title="Delete loaded project" aria-label="Delete loaded project"><svg class="top-trash-icon" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 6.5h17M9 6.5V4.2c0-.7.6-1.2 1.2-1.2h3.6c.7 0 1.2.5 1.2 1.2v2.3M6.3 6.5l.8 13a1.8 1.8 0 001.8 1.7h6.2a1.8 1.8 0 001.8-1.7l.8-13M10 10.5v6M14 10.5v6"/></svg></button>
         <button type="button" class="workspace-icon-btn global-settings-btn" id="global-settings-btn" onclick="openSettingsOverlay()" title="Settings" aria-label="Open settings"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.6h3l.6 2.2c.57.17 1.1.39 1.6.68l1.98-1.1 2.12 2.12-1.1 1.98c.29.5.51 1.03.68 1.6l2.22.62v3l-2.22.62c-.17.57-.39 1.1-.68 1.6l1.1 1.98-2.12 2.12-1.98-1.1c-.5.29-1.03.51-1.6.68l-.6 2.2h-3l-.6-2.2c-.57-.17-1.1-.39-1.6-.68l-1.98 1.1-2.12-2.12 1.1-1.98c-.29-.5-.51-1.03-.68-1.6L2.4 13.5v-3l2.22-.62c.17-.57.39-1.1.68-1.6L4.2 6.3l2.12-2.12 1.98 1.1c.5-.29 1.03-.51 1.6-.68l.6-2Z"/><circle cx="12" cy="12" r="3.15"/></svg></button>
         <input type="file" id="file-input-folder" aria-label="Choose project folder" webkitdirectory directory multiple style="display:none;" />
       </div>
@@ -1189,16 +1204,6 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         </div>
 </div>
     </section>
-<div id="d2-file-navigation" class="d2-file-navigation" hidden aria-label="Project navigation">
-  <label class="d2-file-navigation-label" for="d2-active-html">Page</label>
-  <select id="d2-active-html" aria-label="Preview HTML entry" title="Choose HTML page"><option value="">Current page</option></select>
-  <details class="d2-file-finder"><summary>Find file</summary>
-    <input id="d2-file-search" type="search" placeholder="Search files" aria-label="Search project files" autocomplete="off">
-    <select id="d2-file-results" aria-label="Matching project files"><option value="">Select file</option></select>
-    <button type="button" id="d2-open-file" onclick="d2OpenSelectedFile()">Open</button>
-  </details>
-  <span id="d2-current-filename" title="Active project file" aria-live="polite"></span>
-</div>
 <section class="view-fullscreen-flex" id="view-workspace">
       <!-- Left: File Browser -->
       <div class="workspace-pane-left">
@@ -1228,7 +1233,7 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         <div class="mobile-preview-controls" data-project-action aria-label="Preview actions">
           <span class="mobile-viewer-title" id="mobile-viewer-title">Preview</span>
           <button type="button" onclick="openPreviewInBrowser()" aria-label="Open preview in browser">Browser</button>
-          <button type="button" onclick="openFilesSheet()" aria-label="Open project files">Files</button>
+          <button type="button" class="mobile-viewer-delete" onclick="clearLoadedProject()" aria-label="Delete loaded project" title="Delete project"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 6.5h17M9 6.5V4.2c0-.7.6-1.2 1.2-1.2h3.6c.7 0 1.2.5 1.2 1.2v2.3M6.3 6.5l.8 13a1.8 1.8 0 001.8 1.7h6.2a1.8 1.8 0 001.8-1.7l.8-13M10 10.5v6M14 10.5v6"/></svg></button>
 
         </div>
         <!-- Render Stage -->
@@ -1292,9 +1297,9 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
           </div>
           <div class="findings-container" id="findings-list"><p class="b006-audit-empty">No issues found yet.</p></div>
           <details class="b005-diagnostics" id="audit-console-details"><summary>Console &amp; runtime evidence <span id="audit-console-count"></span></summary><div class="b005-console-actions"><button type="button" onclick="b005CopyConsole()">Copy evidence</button><button type="button" onclick="b005ClearConsole()">Clear</button></div><div id="b005-console" aria-live="polite">No console evidence collected yet.</div></details>
-          <details class="score-method audit-fold"><summary>Score method &amp; file scores</summary><div class="audit-method-body">Score uses verified completed checks only. Passed ÷ completed checks × 100, less confirmed finding penalties (high 12, medium 5, low 2 per occurrence). Unverified and unavailable checks are not passes. File scores start at 100 with confirmed severity deductions (high 30, medium 15, low 7 per occurrence). A score is not a guarantee of quality.<div id="file-scores-list"></div></div></details>
-          <details class="audit-fold" id="upload-notes-details"><summary>Upload &amp; preview notes</summary><div id="upload-debug-box" class="upload-debug-box" hidden></div></details>
-          <details class="audit-fold"><summary>Selected element details</summary><div id="visual-inspector-details"></div><div id="visual-source-hint"></div></details>
+          <div class="audit-support-line">Score is based on verified completed checks and confirmed findings. Incomplete checks are not counted as passes.</div><div id="file-scores-list" class="audit-file-scores"></div>
+          <div id="upload-notes-details" class="audit-inline-notes"><div id="upload-debug-box" class="upload-debug-box" hidden></div></div>
+          <div class="audit-inline-notes"><div id="visual-inspector-details"></div><div id="visual-source-hint"></div></div>
           <div id="b005-baseline-status" class="b005-baseline-status" role="status"></div>
           <div class="audit-quick-actions" aria-label="AI repair handoff"><button type="button" onclick="copyAiHandoffPrompt()">Copy repair</button><button type="button" onclick="exportAuditReport()">Download audit</button><button type="button" onclick="openAiDock('repair')">Open Repair</button></div>
         </div>
@@ -19391,7 +19396,7 @@ codePos,
       const path = (location.origin || 'file://') + (location.pathname || '/');
       let h = 2166136261;
       for (let i=0;i<path.length;i++){h^=path.charCodeAt(i);h=Math.imul(h,16777619);}
-      return 'debooger_DB2K-001_' + (h>>>0).toString(36);
+      return 'debooger_DB2K-002_' + (h>>>0).toString(36);
     })();
     const d2StoreKey = suffix => D2_STORAGE_SCOPE + '_' + suffix;
     const WORKSPACE_DELETED_KEY = d2StoreKey('deleted');
@@ -19649,13 +19654,9 @@ codePos,
       document.body.classList.add('project-' + STATE.projectStatus);
       document.body.classList.toggle('project-valid', projectIsValid());
       const valid = projectIsValid();
-      document.querySelectorAll('[data-project-action]').forEach(el => {
-        if ('disabled' in el) el.disabled = !valid;
-        el.setAttribute('aria-disabled', String(!valid));
-      });
-      document.querySelectorAll('[data-requires-project]').forEach(el => {
-        if ('disabled' in el) el.disabled = !valid;
-        el.setAttribute('aria-disabled', String(!valid));
+      document.querySelectorAll('[data-project-action], [data-requires-project]').forEach(el => {
+        if ('disabled' in el) el.disabled = false;
+        el.removeAttribute('aria-disabled');
       });
     }
 
@@ -19689,7 +19690,7 @@ codePos,
 
     function setMobileWorkspaceScreen(screen, options = {}) {
       if (!['preview','results'].includes(screen)) screen = 'preview';
-      if (!projectIsValid() && STATE.projectStatus !== 'restored') {
+      if (!Object.keys(STATE.files || {}).length && STATE.projectStatus !== 'restored') {
         STATE.mobileWorkspaceScreen = 'preview';
         if (!options.skipSave) switchView('view-home');
         return;
@@ -19943,8 +19944,20 @@ codePos,
           const dx = e.touches[0].clientX - lastX;
           const dy = e.touches[0].clientY - lastY;
           if (Math.abs(dx) > 2 || Math.abs(dy) > 2) moved = true;
-          STATE.previewPanX = (STATE.previewPanX || 0) + dx;
-          STATE.previewPanY = (STATE.previewPanY || 0) + dy;
+          const mostlyVertical = Math.abs(dy) > Math.abs(dx) * 1.2;
+          if (mostlyVertical) {
+            const frame = document.getElementById('live-sandbox-frame');
+            const rect = frame?.getBoundingClientRect();
+            if (frame && rect && rect.width > 0 && rect.height > 0) {
+              const x = (e.touches[0].clientX - rect.left) * (frame.offsetWidth / rect.width);
+              const y = (e.touches[0].clientY - rect.top) * (frame.offsetHeight / rect.height);
+              frame.contentWindow?.postMessage({type:'DEBOOGER_SCROLL',x,y,deltaY:-dy * (frame.offsetHeight / rect.height)},'*');
+            }
+          } else {
+            STATE.previewPanX = (STATE.previewPanX || 0) + dx;
+            STATE.previewPanY = (STATE.previewPanY || 0) + dy;
+            applyPreviewLayout();
+          }
           lastX = e.touches[0].clientX;
           lastY = e.touches[0].clientY;
           applyPreviewLayout();
@@ -19971,7 +19984,7 @@ codePos,
       toggleVisualInspectMode();
     }
     function openAuditFromNav() {
-      if (!projectIsValid()) { showToast('Upload a project to inspect its audit.'); return; }
+      if (!Object.keys(STATE.files || {}).length) { showToast('No project files are loaded for Audit.'); return; }
       if (STATE.activeView !== 'view-workspace') switchView('view-workspace');
       toggleCombinedAudit();
     }
@@ -21013,8 +21026,8 @@ showToast(`Default preview set to ${preset === 'wide1200' ? '1200' : preset[0].t
           if (STATE.previewAttempt !== currentAttempt || !previewStatus || previewStatus.hidden) return;
           if (STATE.runtimeReady) { previewStatus.hidden = true; return; }
           previewStatus.textContent = STATE.projectType === 'react-vite' && !findCompiledWebEntry()
-            ? 'React source has not mounted. Check Audit for the failing import, runtime or build requirement.'
-            : 'Preview startup not confirmed. Check Audit for a specific error.';
+            ? 'React preview is not ready. Details and error evidence appear here; Audit has the full list.'
+            : 'Preview startup not confirmed. Check the visible error details or open Audit for every finding.';
           addConsoleLog('warn',previewStatus.textContent,'preview-startup-timeout');
           previewStatus.classList.add('d2-preview-failed');
         }, STATE.projectType === 'react-vite' && !findCompiledWebEntry() ? 45000 : 12000);
@@ -21531,6 +21544,7 @@ let a=String(nums[3]).endsWith('%')?parseFloat(nums[3])/100:parseFloat(nums[3]);
               if(e.data.type==='DEBOOGER_INSPECT_CLEAR'){d2Locked=null;d2LockedEl=null;d2Paint(null,0,0);}
               if(e.data.type==='DEBOOGER_INSPECT_LOCK_SELECTOR'&&e.data.selector){try{const el=document.querySelector(e.data.selector);if(el){const sel=d2ElementSelection(el,e.data.kind||'container');sel.page=sourceFile;sel.viewport={width:innerWidth,height:innerHeight};sel.candidates=d2CandidatesAt(el);d2Locked=sel;d2LockedEl=el;const r=el.getBoundingClientRect();d2Paint(sel,r.right,r.bottom);}}catch(_){ }}
               if(e.data.type==='DEBOOGER_FORWARD_TAP'){try{const x=Number(e.data.x)||0,y=Number(e.data.y)||0;const el=document.elementFromPoint(x,y);if(el)el.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window,clientX:x,clientY:y}));}catch(_){ }}
+              if(e.data.type==='DEBOOGER_SCROLL'){try{const x=Number(e.data.x)||0,y=Number(e.data.y)||0,dy=Number(e.data.deltaY)||0;let el=document.elementFromPoint(x,y);while(el&&el!==document.documentElement){const st=getComputedStyle(el);if(el.scrollHeight>el.clientHeight+1&&/(auto|scroll)/.test(st.overflowY)){el.scrollTop+=dy;break;}el=el.parentElement;}if(!el||el===document.documentElement){(document.scrollingElement||document.documentElement).scrollTop+=dy;}}catch(_){} }
               if(e.data.type==='DEBOOGER_HIGHLIGHT_SELECTOR'&&e.data.selector){let ok=false;try{const el=document.querySelector(e.data.selector);if(el){ok=true;try{el.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}catch(_){el.scrollIntoView&&el.scrollIntoView();}const oldOutline=el.style.outline,oldOffset=el.style.outlineOffset;el.style.outline='3px solid #2563eb';el.style.outlineOffset='3px';setTimeout(function(){try{el.style.outline=oldOutline;el.style.outlineOffset=oldOffset;}catch(_){}},3500);}}catch(_){ }post({type:'DEBOOGER_HIGHLIGHT_RESULT',ok:ok,selector:String(e.data.selector||'')});}
             });
             function runDomAudit(){
@@ -22109,7 +22123,7 @@ h1.file{font-size:15px;margin:0 0 12px} pre{white-space:pre-wrap;word-break:brea
         else if (!pkg) add(pkgInfo.path, 'The package manifest exists but is not valid JSON.');
         if (!findReactSourceEntry(files)) add('src/main.tsx, src/main.jsx, src/index.tsx, src/index.jsx, or App.tsx/App.jsx', 'A React entry component is required to start the source preview.');
         if (!compiled) {
-          add('A genuine project build', 'DB2K-001 source preview is best-effort. Use the Build React / Vite action when WebContainer prerequisites are available; it honors npm/pnpm/yarn lockfiles and package-manager selection. Otherwise run the original build command in an isolated Node environment and upload its real output.');
+          add('A genuine project build', 'DB2K-002 source preview is best-effort. Use the Build React / Vite action when WebContainer prerequisites are available; it honors npm/pnpm/yarn lockfiles and package-manager selection. Otherwise run the original build command in an isolated Node environment and upload its real output.');
           const wc = getWebContainerSupport();
           if (!wc.supported) add('Full Vite Builder mode', wc.reason || 'Open D2 in a WebContainer-compatible browser session to build the missing dist automatically.');
         }
@@ -22652,7 +22666,11 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
           break;
         }
       }
-      if (!aliasMatched) addBase(ref);
+      if (!aliasMatched) {
+        const direct = resolveVirtualReference(fromPath, ref);
+        if (direct && files[direct]) return { path:direct, file:files[direct] };
+        addBase(ref);
+      }
       if (ref.startsWith('@/') || ref.startsWith('~/')) {
         const rest = ref.replace(/^[@~]\//, '');
         addBase(rest);
@@ -22981,13 +22999,10 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
           replacements.sort((a,b) => b.start - a.start).forEach(change => {
             rewritten = rewritten.slice(0, change.start) + change.value + rewritten.slice(change.end);
           });
-          return sealImportSpecifiers(rewritten, replaceSpec);
+          return rewritten;
         }
       }
-      return sealImportSpecifiers(original
-        .replace(/\bfrom\s*(['"])([^'"]+)\1/g, (m, q, spec) => 'from ' + q + replaceSpec(spec) + q)
-        .replace(/\bimport\s*(['"])([^'"]+)\1/g, (m, q, spec) => 'import ' + q + replaceSpec(spec) + q)
-        .replace(/\bimport\s*\(\s*(['"])([^'"]+)\1/g, (m, q, spec) => 'import(' + q + replaceSpec(spec) + q), replaceSpec);
+      throw new Error('Cannot safely analyze JavaScript imports in ' + fromPath + '. Acorn module parsing is required; the source has not been changed.');
     }
 
     async function loadSucraseTransformer() {
@@ -23160,8 +23175,23 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
         if (/(?:^|\/)(?:vite\.config|vitest\.config|tailwind\.config|postcss\.config|eslint\.config)(?:\.[^/]+)?$/i.test(path)) return;
         const source = getVirtualFileText(file);
         const refs = [];
-        source.replace(/\b(?:from|import)\s*(?:\(\s*)?["']([^"'\n]+)["']/g, (_, spec) => { refs.push(spec); return _; });
-        source.replace(/\brequire\s*\(\s*["']([^"'\n]+)["']\s*\)/g, (_, spec) => { refs.push(spec); return _; });
+        try {
+          const compiler = globalThis.acorn;
+          if (!compiler || typeof compiler.parse !== 'function') return;
+          const ast = compiler.parse(source, {ecmaVersion:'latest',sourceType:'module',allowHashBang:true});
+          walkAcornAst(ast, node => {
+            if ((node.type === 'ImportDeclaration' || node.type === 'ExportNamedDeclaration' || node.type === 'ExportAllDeclaration') && node.source) {
+              const spec = astLiteralString(node.source);
+              if (typeof spec === 'string') refs.push(spec);
+            }
+            if (node.type === 'ImportExpression') {
+              const spec = astLiteralString(node.source);
+              if (typeof spec === 'string') refs.push(spec);
+            }
+          });
+        } catch (error) {
+          addConsoleLog('warn','Dependency scan could not parse ' + path + ': ' + String(error.message || error).slice(0,160),'react-dependency-scan');
+        }
         refs.forEach(spec => {
           const raw = String(spec || '').split('?')[0].trim();
           if (!raw || specifierIsLocal(raw, aliases) || /^(?:https?:|data:|blob:)/i.test(raw)) return;
@@ -23360,7 +23390,7 @@ var bootId = ${bootIdJson};
 var wantTw = ${tailwind ? 'true' : 'false'};
 var d2ExternalPackages = ${externalPackagesJson};
 function d2Need(m){var text=String(m||'');var lower=text.toLowerCase();var need='A deployable compiled output folder, or the missing file/dependency named above.';var marker='Missing file:';var i=text.indexOf(marker);if(i>=0){var tail=text.slice(i+marker.length);need='Needed file: '+tail.split(String.fromCharCode(10))[0].trim();}else if(d2ExternalPackages.length&&(lower.indexOf('failed to fetch dynamically imported module')>=0||lower.indexOf('networkerror')>=0||lower.indexOf('err_failed')>=0||lower.indexOf('data:text/javascript')>=0)){need='Needed project package'+(d2ExternalPackages.length>1?'s':'')+': '+d2ExternalPackages.join(', ')+'. Internet fallback is blocked or unavailable.';}else if(lower.indexOf('failed to fetch dynamically imported module')>=0||lower.indexOf('networkerror')>=0||lower.indexOf('err_failed')>=0){need='Needed: internet access for an uncommon project package, or upload the project’s compiled output folder.';}else{var phrases=['failed to resolve module specifier','cannot find module','cannot find package'];var found='';for(var p=0;p<phrases.length&&!found;p++){var pos=lower.indexOf(phrases[p]);if(pos>=0){var rest2=text.slice(pos+phrases[p].length).trim();var q2=rest2.charAt(0);if(q2==='"'||q2==="'"){var qend=rest2.indexOf(q2,1);found=qend>1?rest2.slice(1,qend):rest2.slice(1);}else found=rest2.split(' ')[0];}}if(found)need='Needed package/module: '+found;else if(lower.indexOf('process is not defined')>=0||lower.indexOf('require is not defined')>=0||lower.indexOf('__dirname is not defined')>=0||lower.indexOf('node:')>=0||lower.indexOf(' fs ')>=0)need='Needed: a real compiled browser build because this source uses Node-only behavior.';else if(lower.indexOf('fetch')>=0||lower.indexOf('network')>=0||lower.indexOf('internet')>=0||lower.indexOf('cdn')>=0||lower.indexOf('esm.sh')>=0||lower.indexOf('jsdelivr')>=0)need='Needed: internet access for the uncommon package named above, or upload the project’s compiled output folder.';}return need;}
-function d2Fail(e){var raw=String(e&&e.message||e);var stack=String(e&&e.stack||'');var name=String(e&&e.name||'Error');var m=raw;if(/Unexpected identifier .https/i.test(raw))m='Module JavaScript syntax error: '+raw+'. Reachable external packages: '+(d2ExternalPackages.join(', ')||'(none detected)')+'. This list is not proof of which module caused the error; inspect the error stack/network URL or build with the project lockfile.';if(m.length>900)m='Preview module failed: '+raw.slice(0,860)+'…';var safe=m.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');var need=d2Need(raw).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');document.body.style.background='#fff';document.body.innerHTML='<div style="padding:28px;max-width:620px;font-family:Inter,sans-serif;color:#0f172a"><h2 style="margin:0 0 8px;font-size:18px">Preview stopped</h2><p style="margin:0;color:#475569;line-height:1.5">'+safe+'</p><h3 style="margin:18px 0 6px;font-size:14px">What this project needs</h3><p style="margin:0;color:#475569;line-height:1.5">'+need+'</p></div>';try{parent.postMessage({type:"RUNTIME_ERROR",kind:"exception",message:m,stack:stack,errorName:name,phase:'react-module-bootstrap',previewGeneration:window.__D2_PREVIEW_GENERATION},"*");}catch(_){} }
+function d2Fail(e){var raw=String(e&&e.message||e);var stack=String(e&&e.stack||'');var name=String(e&&e.name||'Error');var m=raw;if(/Unexpected identifier .https/i.test(raw))m='Module JavaScript syntax error: '+raw+'. Inspect the module stack for the source filename and line; dependency names alone do not establish the cause.';if(m.length>900)m='Preview module failed: '+raw.slice(0,860)+'…';var safe=m.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');var need=d2Need(raw).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');document.body.style.background='#fff';document.body.innerHTML='<div style="padding:28px;max-width:620px;font-family:Inter,sans-serif;color:#0f172a"><h2 style="margin:0 0 8px;font-size:18px">Preview stopped</h2><p style="margin:0;color:#475569;line-height:1.5">'+safe+'</p><h3 style="margin:18px 0 6px;font-size:14px">What this project needs</h3><p style="margin:0;color:#475569;line-height:1.5">'+need+'</p></div>';try{parent.postMessage({type:"RUNTIME_ERROR",kind:"exception",message:m,stack:stack,errorName:name,phase:'react-module-bootstrap',previewGeneration:window.__D2_PREVIEW_GENERATION},"*");}catch(_){} }
 function d2Tw(){if(!wantTw)return;var tw=document.createElement("script");tw.type="module";tw.src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4";document.body.appendChild(tw);}
 import(bootId).then(function(){
   var attempts=0;
@@ -23408,7 +23438,7 @@ setTimeout(function(){if(document.documentElement.getAttribute("data-d2-mounted"
           settle({ok:!!detail.ok,message:detail.message});
         };
         window.addEventListener('d2-preview-settled',listener);
-        mountTimer=setTimeout(() => settle({ok:false,message:'React source did not mount within 25 seconds. Check the Audit for missing files or dependencies.'}),25000);
+        mountTimer=setTimeout(() => settle({ok:false,message:'React source did not mount. Open the error details in this Viewer; the cause may be a runtime exception, missing dependency, or unsupported build step.'}),25000);
       });
       // A previous upload's compiler is never allowed to replace this session.
       frame.srcdoc = attachPreviewInterceptor(loadingHtml || constructReactPreviewShell('Resolving React source.'),interceptor);
@@ -23817,7 +23847,7 @@ setTimeout(function(){if(document.documentElement.getAttribute("data-d2-mounted"
       b005RenderConsole();
       if(item.level==='err' || item.level==='error') {
         renderUploadDebugBox();
-        document.getElementById('audit-console-details')?.setAttribute('open', '');
+
       }
       return item;
     }
@@ -24273,7 +24303,7 @@ setTimeout(function(){if(document.documentElement.getAttribute("data-d2-mounted"
       else toggleWorkspaceDrawer('diagnostics',open);
       if (open) {
         document.querySelectorAll('#findings-list .finding-card.audit-high, #findings-list .finding-card.audit-medium').forEach(card => { card.open = true; });
-        if (document.querySelector('#b005-console .b005-log-line[data-severity="err"],#b005-console .b005-log-line[data-severity="error"]')) document.getElementById('audit-console-details')?.setAttribute('open','');
+
       }
       const btn=document.getElementById('visual-editor-audit-toggle');if(btn)btn.setAttribute('aria-expanded',String(open));
       const mobileBtn=document.getElementById('visual-editor-mobile-audit');if(mobileBtn)mobileBtn.setAttribute('aria-expanded',String(open));
@@ -24743,7 +24773,7 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
     function applyAuditReportUi() {
       const report = STATE.auditReport || { score:null, findings:[], cleanup:[], visual:[], verification:{total:0,passed:0,errors:0,notVerified:0,notApplicable:0} };
       const v = report.verification || { total:0,passed:0,errors:0,notVerified:0,notApplicable:0 };
-      const score = report.score == null ? computeAuditScore(v) : Number(report.score);
+      const score = report.score == null ? computeAuditScore(v, report.tests, [...(report.findings || []), ...(report.cleanup || []), ...(report.visual || [])]) : Number(report.score);
       const hasProject = Object.keys(STATE.files || {}).length > 0;
       if (hasProject && !Object.keys(STATE.fileScores || {}).length) {
         const allFindings = [...(report.findings || []), ...(report.cleanup || []), ...(report.visual || [])];
@@ -25360,8 +25390,7 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
       applyAuditReportUi();
       renderFileScores();
       renderFindingsList();
-      const consoleDetails = document.getElementById('audit-console-details');
-      if (consoleDetails && (verification.errors > 0 || (STATE.consoleLogs || []).some(l => l.level === 'err' || l.level === 'error'))) consoleDetails.open = true;
+
     }
 
     let b006AuditFilter = 'all';
@@ -25370,7 +25399,7 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
       const errors = auditConsoleTarget.querySelectorAll('.b005-log-line[data-severity="err"],.b005-log-line[data-severity="error"]');
       const badge = document.getElementById('audit-console-count');
       if (badge) badge.textContent = errors.length ? ' · ' + errors.length + ' error' + (errors.length === 1 ? '' : 's') : '';
-      if (errors.length) document.getElementById('audit-console-details')?.setAttribute('open','');
+
     }).observe(auditConsoleTarget,{childList:true,subtree:true});
 
     function b006SetAuditFilter(filter) {
@@ -25388,11 +25417,9 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
       const sev = String(f.severity || 'medium').toUpperCase();
       card.innerHTML = `<summary class="b006-finding-head"><span class="b006-finding-title">${escapeHtml(f.title || 'Finding')}</span><span class="b006-finding-severity">${escapeHtml(sev)}</span>${Number(f.count)>1 ? '<span class="b006-finding-repeat">×'+Number(f.count)+'</span>' : ''}</summary>
         <div class="b006-finding-body"><p><strong>Where:</strong> ${escapeHtml(locationText)}</p><p><strong>Next step:</strong> ${escapeHtml(f.fix || 'Review this finding and verify before applying a correction.')}</p>
-        ${f.evidence ? '<details class="b006-evidence"><summary>Evidence</summary><pre>'+escapeHtml(String(f.evidence))+'</pre></details>' : ''}
+        ${f.evidence ? '<pre class="b006-evidence">'+escapeHtml(String(f.evidence))+'</pre>' : ''}
         ${f.rootCause ? '<p><strong>Cause:</strong> '+escapeHtml(String(f.rootCause))+'</p>' : ''}</div>`;
-      card.open = tone === 'error';
-      const evidence = card.querySelector('.b006-evidence');
-      if (evidence && tone === 'error') evidence.open = true;
+      card.open = true;
       return card;
     }
     function renderFindingsList() {
@@ -26542,57 +26569,6 @@ Use saved source hints only when marked exact or verified. If a marker has no sa
 
     // File Tree & Code Editor
 
-    function d2RefreshFileNavigation() {
-      const root = document.getElementById('d2-file-navigation');
-      if (!root) return;
-      const keys = Object.keys(STATE.files || {}).sort();
-      root.hidden = !keys.length;
-      if (!keys.length) return;
-      const entry = document.getElementById('d2-active-html');
-      const current = STATE.entryFile || '';
-      const available = keys.filter(k => /\.html?$/i.test(k));
-      const signature = available.join('\n');
-      if (entry.dataset.signature !== signature) {
-        entry.replaceChildren(new Option('Select HTML page', ''));
-        available.forEach(k => entry.add(new Option(k, k)));
-        entry.dataset.signature = signature;
-      }
-      entry.value = available.includes(current) ? current : '';
-      document.getElementById('d2-current-filename').textContent = STATE.selectedFile || current || STATE.projectName || 'Project';
-      d2RefreshFileSearch();
-    }
-    function d2RefreshFileSearch() {
-      const target = document.getElementById('d2-file-results');
-      if (!target) return;
-      const q = String(document.getElementById('d2-file-search')?.value || '').trim().toLowerCase();
-      const keys = Object.keys(STATE.files || {}).filter(k=>k.toLowerCase().includes(q)).sort();
-      const old = target.value;
-      target.replaceChildren(new Option(keys.length ? 'Select project file' : 'No matching files',''));
-      keys.slice(0,250).forEach(k=>target.add(new Option(k,k)));
-      if (keys.includes(old)) target.value = old;
-    }
-    function d2OpenSelectedFile() {
-      const path = document.getElementById('d2-file-results')?.value;
-      if (!path || !STATE.files[path]) return;
-      STATE.selectedFile = path;
-      if (/\.html?$/i.test(path)) {
-        STATE.entryFile = path;
-        buildSandboxLiveViewer();
-      } else {
-        const file = STATE.files[path];
-        if (!file.binary) openSelectedFileEditor();
-        else showToast('Binary file selected; download it from Files.');
-      }
-      renderFileTree(); d2RefreshFileNavigation();
-    }
-    document.getElementById('d2-file-search')?.addEventListener('input',d2RefreshFileSearch);
-    document.getElementById('d2-active-html')?.addEventListener('change',event => {
-      const path = event.target.value;
-      if (!path || !STATE.files[path]) return;
-      STATE.entryFile=path; STATE.selectedFile=path;
-      buildSandboxLiveViewer(); renderFileTree();d2RefreshFileNavigation();
-    });
-
     function renderFileTree() {
       const container = document.getElementById('file-tree-container');
       const countBadge = document.getElementById('workspace-file-count');
@@ -26643,7 +26619,16 @@ Use saved source hints only when marked exact or verified. If a marker has no sa
         download.title = 'Download ' + item.path;
         download.textContent = '⬇️';
         download.addEventListener('click', (event) => { event.stopPropagation(); downloadIndividualFile(item.path); });
-        node.addEventListener('click', () => { STATE.selectedFile = item.path; renderFileTree(); });
+        node.addEventListener('click', () => {
+          STATE.selectedFile = item.path;
+          if (/\.html?$/i.test(item.path)) {
+            STATE.entryFile = item.path;
+            closeFilesSheet();
+            buildSandboxLiveViewer();
+          }
+          renderFileTree();
+          scheduleWorkspaceSave(250);
+        });
         node.append(icon, name, size, download);
         return node;
       };
@@ -26678,7 +26663,7 @@ Use saved source hints only when marked exact or verified. If a marker has no sa
       Object.keys(root.dirs).sort().forEach(k => container.appendChild(makeFolder(k, root.dirs[k], 0)));
       root.files.sort((a,b) => a.name.localeCompare(b.name)).forEach(f => container.appendChild(makeFileRow(f)));
       setupHoverScrollbars();
-      d2RefreshFileNavigation();
+      
     }
 
     function filterFileTree(query) {
@@ -27636,7 +27621,7 @@ function b005ClearConsole(){STATE.consoleLogs=[];b005RenderConsole();}
         ['AI chat',!!document.getElementById('d2-ai-chat')],
         ['GitHub Publish',!!document.getElementById('b005-pages-modal')],
         ['React entry detection',typeof detectProjectType==='function'],
-        ['Version storage isolation',D2_STORAGE_SCOPE.includes('DB2K-001') && WORKSPACE_DB_NAME.startsWith(D2_STORAGE_SCOPE)],
+        ['Version storage isolation',D2_STORAGE_SCOPE.includes('DB2K-002') && WORKSPACE_DB_NAME.startsWith(D2_STORAGE_SCOPE)],
         ['Paste selection wiring',document.querySelectorAll('#modal-paste-code [data-paste-format]').length===5]
       ];
       try {
@@ -27660,8 +27645,8 @@ function b005ClearConsole(){STATE.consoleLogs=[];b005RenderConsole();}
 
 /* D2 engine load marker */
 window.D2_ENGINE_READY = true;
-window.D2_ENGINE_VERSION = 'DB2K-001';
-try { window.dispatchEvent(new CustomEvent('d2-engine-ready', { detail: { version: 'DB2K-001' } })); } catch (_) {}
+window.D2_ENGINE_VERSION = 'DB2K-002';
+try { window.dispatchEvent(new CustomEvent('d2-engine-ready', { detail: { version: 'DB2K-002' } })); } catch (_) {}
 
 </script>
 <dialog id="d2-ai-chat" aria-label="AI Chat and provider setup">
@@ -28410,7 +28395,7 @@ load();
       const cleanupRow=b012El('db2k-clean-row');if(cleanupRow)cleanupRow.hidden=mode!=='viewer';
       const renameArea=b012El('b030-publish-rename');
       if(renameArea)renameArea.hidden=mode!=='archive'||!B030_UPLOAD_NAMES.length;
-      if (mode === 'viewer') return 'Publishes the complete DEBOOGER DB2K-001 application as root index.html. Public URL follows the selected repository.';
+      if (mode === 'viewer') return 'Publishes the complete DEBOOGER DB2K-002 application as root index.html. Public URL follows the selected repository.';
       if (mode === 'archive') {
         const selection = [...(b012El('b026-publish-files')?.files || [])];
         const changes=[...B030_UPLOAD_RENAMES].filter(([id,target])=>B030_UPLOAD_NAMES.some(n=>n.id===id && n.name!==target));
@@ -28429,7 +28414,7 @@ load();
         // The entire self-contained Debooger application IS the index file.
         // Publish the pristine startup template, never the mutable runtime DOM.
         const html = D2_PUBLISH_SOURCE_HTML;
-        if (!html || !html.includes('DEBOOGER2000') || !html.includes('DB2K-001')) throw new Error('Could not prepare DEBOOGER DB2K-001 for upload.');
+        if (!html || !html.includes('DEBOOGER2000') || !html.includes('DB2K-002')) throw new Error('Could not prepare DEBOOGER DB2K-002 for upload.');
         if (/(?:github_pat_|ghp_)[A-Za-z0-9_]{24,}/.test(html)) throw new Error('Possible embedded GitHub token found; publishing was blocked.');
         return { entries:[{path:'index.html',content:b005ToBase64(html)}], omitted:0, rewritten:false };
       }
@@ -28604,7 +28589,7 @@ load();
       await Promise.all(Array.from({ length:files.some(file=>file.getContent)?1:Math.min(5, files.length) }, worker));
       const tree = await b012GithubApi(root + '/git/trees', { method:'POST', body:{ base_tree:commit.tree.sha, tree:[...blobs,...deletions] } });
       if (!tree?.sha) throw new Error('GitHub did not confirm the new file tree.');
-      const created = await b012GithubApi(root + '/git/commits', { method:'POST', body:{ message:'Publish website from DEBOOGER2000 DB2K-001', tree:tree.sha, parents:[ref.object.sha] } });
+      const created = await b012GithubApi(root + '/git/commits', { method:'POST', body:{ message:'Publish website from DEBOOGER2000 DB2K-002', tree:tree.sha, parents:[ref.object.sha] } });
       if (!created?.sha) throw new Error('GitHub did not confirm the commit.');
       await b012GithubApi(root + '/git/refs/heads/main', {method:'PATCH', body:{sha:created.sha,force:false} });
       const verified = await b012GithubApi(root + '/git/ref/heads/main');
