@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-  <title>DEBOOGER2000 | Visual Project Viewer & Inspector — DB2K-002</title>
+  <title>DEBOOGER2000 | Visual Project Viewer & Inspector — DB2K-003</title>
   <!-- DEBOOGER2000 DB2K-002: standalone visual project viewer, inspector, auditor, and exporter. -->
   <!-- Bundled ZIP engine: JSZip 3.10.1 (MIT/GPLv3 dual licensed; upstream license notice retained below). -->
   
@@ -19677,12 +19677,12 @@ codePos,
       document.body.classList.toggle('project-valid', projectIsValid());
       const valid = projectIsValid();
       document.querySelectorAll('[data-project-action]').forEach(el => {
-        if ('disabled' in el) el.disabled = !valid;
-        el.setAttribute('aria-disabled', String(!valid));
+        if ('disabled' in el) el.disabled = false;
+        el.setAttribute('aria-disabled', 'false');
       });
       document.querySelectorAll('[data-requires-project]').forEach(el => {
-        if ('disabled' in el) el.disabled = !valid;
-        el.setAttribute('aria-disabled', String(!valid));
+        if ('disabled' in el) el.disabled = false;
+        el.setAttribute('aria-disabled', 'false');
       });
     }
 
@@ -23051,7 +23051,7 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
               const filePath = String(options.filePath || (jsx ? 'file.tsx' : 'file.ts'));
               const result = ts.transpileModule(String(source || ''), {
                 fileName: filePath,
-                reportDiagnostics: false,
+                reportDiagnostics: true,
                 compilerOptions: {
                   target: ts.ScriptTarget.ES2020,
                   module: ts.ModuleKind.ESNext,
@@ -23068,6 +23068,8 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
                   useDefineForClassFields: false
                 }
               });
+              const syntaxErrors=(result.diagnostics||[]).filter(d=>d.category===ts.DiagnosticCategory.Error);
+              if(syntaxErrors.length)throw new Error('JSX/TypeScript error in '+filePath+': '+ts.flattenDiagnosticMessageText(syntaxErrors[0].messageText,'\n'));
               return { code: result.outputText || String(source || '') };
             }
           };
@@ -23744,6 +23746,8 @@ setTimeout(function(){if(document.documentElement.getAttribute("data-d2-mounted"
         if (existing) existing.count = (existing.count || 1) + 1;
         else STATE.runtimeErrors.push({ ...item, count: 1, _key: key });
         addConsoleLog('err', `[${item.kind === 'promise' ? 'PROMISE_REJECT' : 'RUNTIME_ERROR'}] ${item.message}${item.line ? ` (Line ${item.line})` : ''}`, `runtime|${key}`);
+        const notice=document.getElementById('d2-preview-status');
+        if(notice){notice.hidden=false;notice.classList.add('d2-preview-failed');notice.textContent='Preview error: '+item.message;}
         updateRuntimeConsoleBadge();
         scheduleVerifiedAuditRefresh();
         return;
@@ -25379,14 +25383,14 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
       const groupedFindings = normalizeFindingGroups(findings.map(({_key,evidenceSamples,...f})=>f), files);
       const groupedCleanup = normalizeFindingGroups(cleanup, files);
       const groupedVisual = normalizeFindingGroups(visual, files);
-      const score = computeAuditScore(verification, tests, [...groupedFindings, ...groupedCleanup, ...groupedVisual]);
+      const score = computeAuditScore(verification, tests, [...groupedFindings, ...groupedVisual]);
       computeFileScores([...groupedFindings, ...groupedCleanup, ...groupedVisual]);
       STATE.auditReport = { score, findings: groupedFindings, cleanup: groupedCleanup, visual: groupedVisual, categories, tests, verification, scoreFormula:'completed checks passed / completed checks minus confirmed finding penalties', fileScores:STATE.fileScores };
       applyAuditReportUi();
       renderFileScores();
       renderFindingsList();
       const consoleDetails = document.getElementById('audit-console-details');
-      if (consoleDetails) consoleDetails.open = false;
+      // The console starts collapsed. Keep its user-selected open/closed state on recheck.
     }
 
     let b006AuditFilter = 'all';
@@ -27684,8 +27688,8 @@ function b005ClearConsole(){STATE.consoleLogs=[];b005RenderConsole();}
 
 /* D2 engine load marker */
 window.D2_ENGINE_READY = true;
-window.D2_ENGINE_VERSION = 'DB2K-002';
-try { window.dispatchEvent(new CustomEvent('d2-engine-ready', { detail: { version: 'DB2K-002' } })); } catch (_) {}
+window.D2_ENGINE_VERSION = 'DB2K-003';
+try { window.dispatchEvent(new CustomEvent('d2-engine-ready', { detail: { version: 'DB2K-003' } })); } catch (_) {}
 
 </script>
 <dialog id="d2-ai-chat" aria-label="AI Chat and provider setup">
