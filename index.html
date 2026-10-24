@@ -645,7 +645,7 @@ header{height:60px!important;background:rgba(255,255,255,.94)!important;border-b
 
 
 /* Only additions; the v31 classic desktop styling remains intact. */
-.b005-diagnostics{border:1px solid #dce3ec;border-radius:6px;background:white;color:#334155;font-size:12px;}.b005-diagnostics>summary{padding:8px 10px;cursor:pointer;font-weight:600;list-style:none}.b005-console-actions{display:flex;gap:8px;border-top:1px solid #e2e8f0;padding:6px 8px}.b005-console-actions button{border:1px solid #cbd5e1;background:white;color:#334155;min-height:28px;padding:3px 9px;border-radius:4px;cursor:pointer;font-size:12px}#b005-console{height:min(56dvh,560px);min-height:260px;overflow:auto;border-top:1px solid #e2e8f0;padding:8px 10px;font-size:12px;line-height:1.5;overflow-wrap:anywhere;white-space:normal;font-family:Inter,ui-sans-serif,system-ui,sans-serif}.b005-log-line{display:grid;grid-template-columns:74px minmax(0,1fr);gap:7px;padding:8px 6px;border-bottom:1px solid #edf2f7}.b005-log-group{border:1px solid #e2e8f0;border-radius:7px;margin:0 0 8px;overflow:hidden}.b005-log-title{background:#f8fafc;border-bottom:1px solid #e2e8f0;font-size:12px;font-weight:600;padding:8px}.b005-log-time{font-size:11px;color:#64748b;font-variant-numeric:tabular-nums}.b005-log-group details>summary{padding:8px;cursor:pointer;font-size:12px;color:#64748b}.b005-log-line[data-severity="err"],.b005-log-line[data-severity="error"]{color:#b42318}.b005-log-line[data-severity="warn"]{color:#9a6700}.b005-log-line>span:first-child{font-weight:600}.b005-baseline-status{padding:3px 11px;font-size:12px;color:#64748b}
+.b005-diagnostics{border:1px solid #dce3ec;border-radius:6px;background:white;color:#334155;font-size:12px;}.b005-diagnostics>summary{padding:8px 10px;cursor:pointer;font-weight:600;list-style:none}.b005-console-actions{display:flex;gap:8px;border-top:1px solid #e2e8f0;padding:6px 8px}.b005-console-actions button{border:1px solid #cbd5e1;background:white;color:#334155;min-height:28px;padding:3px 9px;border-radius:4px;cursor:pointer;font-size:12px}#b005-console{height:auto;max-height:min(34dvh,280px);min-height:0;overflow:auto;border-top:1px solid #e2e8f0;padding:8px 10px;font-size:12px;line-height:1.5;overflow-wrap:anywhere;white-space:normal;font-family:Inter,ui-sans-serif,system-ui,sans-serif}.b005-log-line{display:grid;grid-template-columns:74px minmax(0,1fr);gap:7px;padding:8px 6px;border-bottom:1px solid #edf2f7}.b005-log-group{border:1px solid #e2e8f0;border-radius:7px;margin:0 0 8px;overflow:hidden}.b005-log-title{background:#f8fafc;border-bottom:1px solid #e2e8f0;font-size:12px;font-weight:600;padding:8px}.b005-log-time{font-size:11px;color:#64748b;font-variant-numeric:tabular-nums}.b005-log-group details>summary{padding:8px;cursor:pointer;font-size:12px;color:#64748b}.b005-log-line[data-severity="err"],.b005-log-line[data-severity="error"]{color:#b42318}.b005-log-line[data-severity="warn"]{color:#9a6700}.b005-log-line>span:first-child{font-weight:600}.b005-baseline-status{padding:3px 11px;font-size:12px;color:#64748b}
 .b005-modal{margin:auto;width:min(610px,calc(100vw - 24px));max-width:none;max-height:90dvh;padding:0;border-radius:9px;border:1px solid #cbd5e1;background:#fff;color:#334155;box-shadow:0 16px 40px #0003;font-family:Inter,system-ui,sans-serif}.b005-modal::backdrop{background:#0f172a66}.b005-modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;border-bottom:1px solid #e2e8f0;font-size:14px}.b005-modal-body{padding:14px 16px;display:grid;gap:12px;max-height:calc(90dvh - 60px);overflow-y:auto;font-size:13px}.b005-modal-body p{line-height:1.45;font-size:12px;margin:0;color:#64748b}.b005-modal-body label{display:grid;gap:5px;font-size:12px;color:#475569}.b005-modal-body input,.b005-modal-body select{height:36px;width:100%;min-width:0;border:1px solid #cbd5e1;padding:5px 9px;border-radius:5px;background:#fff;color:#334155;font-size:13px}.b005-modal button{border:1px solid #cbd5e1;background:#fff;color:#334155;border-radius:5px;cursor:pointer;min-height:33px;padding:5px 11px;font-size:12px}#b005-deploy-now{background:#087f6e;border-color:#087f6e;color:#fff;font-weight:600}#b005-pages-result{font-size:12px;line-height:1.5;overflow-wrap:anywhere}#b005-pages-result a{color:#065f46;text-decoration:underline}#b005-pages-status{color:#64748b}
 @media(max-width:900px){.b005-modal{width:calc(100vw - 14px);max-height:94dvh}.b005-modal-body{max-height:calc(94dvh - 55px)}.b005-diagnostics{margin:6px}}
 
@@ -23812,34 +23812,27 @@ setTimeout(function(){if(document.documentElement.getAttribute("data-d2-mounted"
       if (previous && previous.message===item.message && previous.level===item.level) previous.count=(previous.count||1)+1;
       else { STATE.consoleLogs.push(item); if (STATE.consoleLogs.length>250) STATE.consoleLogs.shift(); }
       b005RenderConsole();
-      if(item.level==='err' || item.level==='error') {
-        renderUploadDebugBox();
-        document.getElementById('audit-console-details')?.setAttribute('open', '');
-      }
+      if(item.level==='err' || item.level==='error') renderUploadDebugBox();
       return item;
     }
     function b005RenderConsole() {
-      const host=document.getElementById('b005-console');if(!host)return;
+      const host = document.getElementById('b005-console');
+      if (!host) return;
       host.replaceChildren();
-      const logs=(STATE.consoleLogs||[]).slice(-150);
-      if(!logs.length){host.textContent='No messages for this project.';return;}
-      const categories=[{name:'Errors',match:l=>l==='err'||l==='error'},
-                        {name:'Warnings',match:l=>l==='warn'},
-                        {name:'Information',match:l=>l!=='err'&&l!=='error'&&l!=='warn'}];
-      for(const category of categories){
-        const rows=logs.filter(item=>category.match(item.level));
-        const group=document.createElement('section');group.className='b005-log-group';
-        const title=document.createElement('div');title.className='b005-log-title';title.textContent=category.name+' · '+rows.length;group.append(title);
-        if(rows.length){
-          const body=category.name==='Information'?document.createElement('details'):document.createElement('div');
-          if(body.tagName==='DETAILS') {const summary=document.createElement('summary');summary.textContent='Show information';body.append(summary);}
-          rows.forEach(item=>{const row=document.createElement('div');row.className='b005-log-line';row.dataset.severity=item.level;
-            const clock=document.createElement('span');clock.className='b005-log-time';clock.textContent=item.time;
-            const desc=document.createElement('span');desc.textContent=item.message+(item.count>1?' ×'+item.count:'');row.append(clock,desc);body.append(row);});
-          group.append(body);
-        }else{const empty=document.createElement('div');empty.style.cssText='padding:7px;color:#94a3b8;font-size:12px';empty.textContent='None';group.append(empty);}
-        host.append(group);
-      }
+      const logs = (STATE.consoleLogs || []).slice(-150);
+      if (!logs.length) { host.textContent = 'No console messages for this project.'; return; }
+      logs.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'b005-log-line';
+        row.dataset.severity = item.level;
+        const stamp = document.createElement('span');
+        stamp.className = 'b005-log-time';
+        stamp.textContent = String(item.level || 'info').toUpperCase() + ' · ' + item.time;
+        const body = document.createElement('span');
+        body.textContent = item.message + (item.count > 1 ? ' ×' + item.count : '');
+        row.append(stamp,body);
+        host.appendChild(row);
+      });
     }
 
     function setDeboogerTab(name, openDrawer) {
@@ -24754,7 +24747,7 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
       const verdict = document.getElementById('health-verdict');
       const sub = document.getElementById('health-subtext');
       if (gauge) {
-        gauge.textContent = hasProject && score != null ? Math.max(0, Math.min(100, Math.round(score))) + '/100' + (v.notVerified ? ' partial' : '') : '—';
+        gauge.textContent = hasProject ? (score != null ? Math.max(0, Math.min(100, Math.round(score))) + '/100' : 'Not scored') : '—';
         gauge.setAttribute('aria-label', hasProject && score != null ? 'Project score ' + Math.round(score) + ' out of 100' : 'Project score unavailable until a check completes');
         gauge.classList.remove('score-good','score-warn','score-bad');
         if(hasProject && score != null) gauge.classList.add(score < 60 ? 'score-bad' : score < 85 ? 'score-warn' : 'score-good');
@@ -24764,7 +24757,7 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
         if (sub) sub.textContent = 'Open a project to run checks.';
       } else if (score == null) {
         if (verdict) verdict.textContent = 'Partial audit';
-        if (sub) sub.textContent = `${v.passed || 0} passed · ${v.errors || 0} failed · ${v.notVerified || 0} not verified — no completed checks to score`; 
+        if (sub) sub.textContent = `${v.passed || 0} passed · ${v.errors || 0} failed · ${v.notVerified || 0} unverified — run Recheck to update`; 
       } else if (!report.findings.length && !(report.cleanup || []).length && !(report.visual || []).length) {
         if (verdict) verdict.textContent = v.notVerified ? 'No confirmed errors in completed checks' : 'Looks clean';
         if (sub) sub.textContent = `${v.passed || 0} passed · ${v.errors || 0} failed · ${v.notVerified || 0} not verified`; 
@@ -25357,8 +25350,7 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
       applyAuditReportUi();
       renderFileScores();
       renderFindingsList();
-      const consoleDetails = document.getElementById('audit-console-details');
-      if (consoleDetails && (verification.errors > 0 || (STATE.consoleLogs || []).some(l => l.level === 'err' || l.level === 'error'))) consoleDetails.open = true;
+      
     }
 
     let b006AuditFilter = 'all';
@@ -25367,54 +25359,53 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
       const errors = auditConsoleTarget.querySelectorAll('.b005-log-line[data-severity="err"],.b005-log-line[data-severity="error"]');
       const badge = document.getElementById('audit-console-count');
       if (badge) badge.textContent = errors.length ? ' · ' + errors.length + ' error' + (errors.length === 1 ? '' : 's') : '';
-      if (errors.length) document.getElementById('audit-console-details')?.setAttribute('open','');
+      
     }).observe(auditConsoleTarget,{childList:true,subtree:true});
 
     function b006SetAuditFilter(filter) {
       b006AuditFilter = ['all','error','visual','cleanup'].includes(filter) ? filter : 'all';
       document.querySelectorAll('[data-audit-filter]').forEach(btn => btn.classList.toggle('active', btn.dataset.auditFilter === b006AuditFilter));
-      document.querySelectorAll('#findings-list [data-audit-kind]').forEach(row => { row.hidden = b006AuditFilter !== 'all' && row.dataset.auditKind !== b006AuditFilter; });
+      document.querySelectorAll('#findings-list [data-audit-kind]').forEach(row => { const visible = b006AuditFilter === 'all' || row.dataset.auditKind === b006AuditFilter; row.hidden = !visible; if (visible) row.open = true; });
     }
     function renderFindingCard(f, tone) {
       const card = document.createElement('details');
       card.className = 'finding-card' + (tone === 'cleanup' ? ' finding-cleanup' : tone === 'visual' ? ' finding-visual' : '');
       card.dataset.auditKind = tone;
-      card.classList.add(tone === 'error' ? (String(f.severity || '').toLowerCase() === 'high' ? 'audit-high' : 'audit-medium') : 'audit-review');
+      const severity = String(f.severity || 'medium').toLowerCase();
+      card.classList.add(tone === 'error' ? (severity === 'high' ? 'audit-high' : severity === 'low' ? 'audit-low' : 'audit-medium') : 'audit-review');
       const locations = Array.isArray(f.locations) && f.locations.length ? f.locations : [{ file:f.file || 'project', line:f.line || null }];
-      const locationText = locations.map(loc => `${loc.file}${loc.line ? ':' + loc.line : ''}`).join(' · ');
-      const sev = String(f.severity || 'medium').toUpperCase();
-      card.innerHTML = `<summary class="b006-finding-head"><span class="b006-finding-title">${escapeHtml(f.title || 'Finding')}</span><span class="b006-finding-severity">${escapeHtml(sev)}</span>${Number(f.count)>1 ? '<span class="b006-finding-repeat">×'+Number(f.count)+'</span>' : ''}</summary>
-        <div class="b006-finding-body"><p><strong>Where:</strong> ${escapeHtml(locationText)}</p><p><strong>Next step:</strong> ${escapeHtml(f.fix || 'Review this finding and verify before applying a correction.')}</p>
-        ${f.evidence ? '<details class="b006-evidence"><summary>Evidence</summary><pre>'+escapeHtml(String(f.evidence))+'</pre></details>' : ''}
-        ${f.rootCause ? '<p><strong>Cause:</strong> '+escapeHtml(String(f.rootCause))+'</p>' : ''}</div>`;
-      card.open = tone === 'error';
-      const evidence = card.querySelector('.b006-evidence');
-      if (evidence && tone === 'error') evidence.open = true;
+      const locationText = locations.map(loc => String(loc.file) + (loc.line ? ':' + loc.line : '')).join(' · ');
+      const count = Number(f.count) > 1 ? '<span class="b006-finding-repeat">×' + Number(f.count) + '</span>' : '';
+      card.innerHTML = '<summary class="b006-finding-head"><span class="b006-finding-title">' + escapeHtml(f.title || 'Finding') + '</span><span class="b006-finding-severity">' + escapeHtml(severity.toUpperCase()) + '</span>' + count + '</summary>'
+        + '<div class="b006-finding-body"><p><strong>Where:</strong> ' + escapeHtml(locationText) + '</p><p><strong>Fix:</strong> ' + escapeHtml(f.fix || 'Review the evidence and correct the source.') + '</p>'
+        + (f.evidence ? '<pre class="b006-inline-evidence">' + escapeHtml(String(f.evidence)) + '</pre>' : '')
+        + (f.rootCause ? '<p><strong>Cause:</strong> ' + escapeHtml(String(f.rootCause)) + '</p>' : '') + '</div>';
+      card.open = true;
       return card;
     }
     function renderFindingsList() {
       const list = document.getElementById('findings-list');
       if (!list) return;
       const groups = [
-        ['error', STATE.auditReport.findings || [], 'Errors'],
-        ['visual', STATE.auditReport.visual || [], 'Appearance to review'],
-        ['cleanup', STATE.auditReport.cleanup || [], 'Cleanup suggestions']
+        ['error', STATE.auditReport?.findings || []],
+        ['visual', STATE.auditReport?.visual || []],
+        ['cleanup', STATE.auditReport?.cleanup || []]
       ];
-      const countEl = document.getElementById('findings-count');
-      const uniqueTotal = groups.reduce((n, group) => n + group[1].length, 0);
-      if (countEl) countEl.textContent = String(uniqueTotal);
-      const highest = (STATE.auditReport.findings || []).some(f => String(f.severity || '').toLowerCase() === 'high') ? 'audit-bad' : uniqueTotal ? 'audit-warn' : 'audit-good';
-      ['audit-nav-count','audit-mobile-count'].forEach(id => { const badge=document.getElementById(id); if(badge){badge.textContent=String(uniqueTotal);badge.className='audit-nav-count '+highest;badge.setAttribute('aria-label',uniqueTotal+' unique audit issues');} });
-      list.replaceChildren();
-      if (groups.every(group => !group[1].length)) {
-        const empty=document.createElement('p');empty.className='b006-audit-empty';empty.textContent='No findings reported by the checks that ran.';list.appendChild(empty);return;
-      }
-      groups.forEach(([kind, findings, name]) => {
-        if (!findings.length) return;
-        const heading=document.createElement('div');heading.className='b006-findings-section';heading.dataset.auditKind=kind;
-        heading.textContent=name+' · '+findingOccurrenceCount(findings);list.appendChild(heading);
-        findings.forEach(f=>list.appendChild(renderFindingCard(f,kind)));
+      const total = groups.reduce((sum, group) => sum + group[1].length, 0);
+      const count = document.getElementById('findings-count');
+      if (count) count.textContent = String(total);
+      ['audit-nav-count','audit-mobile-count'].forEach(id => {
+        const badge = document.getElementById(id);
+        if (badge) { badge.textContent=String(total); badge.setAttribute('aria-label', total+' audit findings'); badge.className='audit-nav-count'; }
       });
+      list.replaceChildren();
+      if (!total) {
+        const empty = document.createElement('p');
+        empty.className = 'b006-audit-empty';
+        empty.textContent = Object.keys(STATE.files || {}).length ? 'No issues found by the checks completed. Some checks may still be unverified.' : 'Upload a project to run the audit.';
+        list.appendChild(empty);return;
+      }
+      groups.forEach(([kind,findings]) => findings.forEach(f => list.appendChild(renderFindingCard(f,kind))));
       b006SetAuditFilter(b006AuditFilter);
     }
 
