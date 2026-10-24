@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-  <title>DEBOOGER2000 | Visual Project Viewer & Inspector — DB2K-001</title>
-  <!-- DEBOOGER2000 DB2K-001: standalone visual project viewer, inspector, auditor, and exporter. -->
+  <title>DEBOOGER2000 | Visual Project Viewer & Inspector — DB2K-002</title>
+  <!-- DEBOOGER2000 DB2K-002: standalone visual project viewer, inspector, auditor, and exporter. -->
   <!-- Bundled ZIP engine: JSZip 3.10.1 (MIT/GPLv3 dual licensed; upstream license notice retained below). -->
   
   
@@ -566,7 +566,7 @@
     }
   }
 
-  body:not(.project-valid) [data-project-action] { display:none !important; }
+  body:not(.has-project) [data-project-action] { display:none !important; }
   @media (max-width:900px) {
     html,body { min-height:100dvh; overscroll-behavior:none;  }
     .top-nav { display:none; }
@@ -1059,6 +1059,8 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
 .workspace-pane-right .b006-finding-body{padding:1px 15px 13px!important;border-top:0!important}
 .workspace-pane-right .b005-diagnostics,.workspace-pane-right .audit-fold{margin:4px 18px 8px!important;border:1px solid #e1e7ee!important;border-radius:7px!important;background:#fff!important;color:#334155!important;font-size:12px!important;overflow:hidden}.workspace-pane-right .b005-diagnostics>summary,.workspace-pane-right .audit-fold>summary{padding:11px 12px!important;list-style:none!important;cursor:pointer!important;font-size:12px!important;font-weight:600!important}.workspace-pane-right .audit-fold>summary::-webkit-details-marker{display:none}.workspace-pane-right .audit-method-body{padding:4px 12px 12px;font-size:12px;line-height:1.55;color:#64748b}.workspace-pane-right .upload-debug-box{margin:0!important;border:0!important;border-top:1px solid #edf1f5!important;background:#fff!important}.workspace-pane-right .audit-quick-actions{margin-top:10px!important;border-top:1px solid #edf1f5!important}.workspace-pane-right .b005-diagnostics:has(.b005-log-line[data-severity="err"],.b005-log-line[data-severity="error"]){border-left:3px solid #d64e4e!important}
 
+@media(min-width:901px){#d2-preview-delete{display:none!important}}
+@media(max-width:900px){.d2-file-navigation #d2-preview-delete{display:inline-grid!important;place-items:center;flex:0 0 40px!important;min-width:40px;height:32px!important;padding:0!important;border:0!important;background:transparent!important;color:#ab3540!important}.d2-file-navigation #d2-active-html{flex:1;min-width:0!important;max-width:none!important;width:auto!important}.d2-file-navigation{gap:5px!important;padding:0 10px!important}}
 /* Mobile text fields must be >=16px to avoid involuntary Safari page zoom. */
 @media (max-width:900px){
   .workspace-pane-left input[type=text], .workspace-pane-left input[type=search],
@@ -1088,7 +1090,7 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         <div class="topbar-logo">
           <div class="logo-mark">D2</div>
           <div class="logo-text">DEBOOGER<span style="color:var(--primary)">2000</span></div>
-          <span class="build-mark" aria-label="Build DB2K-001">DB2K-001</span>
+          <span class="build-mark" aria-label="Build DB2K-002">DB2K-002</span>
         </div>
       </div>
       <nav class="top-nav" aria-label="Main">
@@ -1155,7 +1157,7 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         <div class="workspace-correction-list" id="workspace-correction-list"></div>
       </div>
       <div class="header-actions" id="header-actions">
-        <button type="button" class="workspace-icon-btn project-only-action workspace-delete-btn" id="btn-top-trash" onclick="clearLoadedProject()" title="Delete loaded project" aria-label="Delete loaded project"><svg class="top-trash-icon" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v7M14 11v7"/></svg></button>
+        <button type="button" class="workspace-icon-btn project-only-action workspace-delete-btn" id="btn-top-trash" onclick="clearLoadedProject()" title="Delete loaded project" aria-label="Delete loaded project"><svg class="top-trash-icon" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 4h4l1 3H9l1-3ZM7 7l1 13h8l1-13M10 11v6m4-6v6"/></svg></button>
         <button type="button" class="workspace-icon-btn global-settings-btn" id="global-settings-btn" onclick="openSettingsOverlay()" title="Settings" aria-label="Open settings"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.6h3l.6 2.2c.57.17 1.1.39 1.6.68l1.98-1.1 2.12 2.12-1.1 1.98c.29.5.51 1.03.68 1.6l2.22.62v3l-2.22.62c-.17.57-.39 1.1-.68 1.6l1.1 1.98-2.12 2.12-1.98-1.1c-.5.29-1.03.51-1.6.68l-.6 2.2h-3l-.6-2.2c-.57-.17-1.1-.39-1.6-.68l-1.98 1.1-2.12-2.12 1.1-1.98c-.29-.5-.51-1.03-.68-1.6L2.4 13.5v-3l2.22-.62c.17-.57.39-1.1.68-1.6L4.2 6.3l2.12-2.12 1.98 1.1c.5-.29 1.03-.51 1.6-.68l.6-2Z"/><circle cx="12" cy="12" r="3.15"/></svg></button>
         <input type="file" id="file-input-folder" aria-label="Choose project folder" webkitdirectory directory multiple style="display:none;" />
       </div>
@@ -1197,7 +1199,7 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
     <select id="d2-file-results" aria-label="Matching project files"><option value="">Select file</option></select>
     <button type="button" id="d2-open-file" onclick="d2OpenSelectedFile()">Open</button>
   </details>
-  <span id="d2-current-filename" title="Active project file" aria-live="polite"></span>
+  <span id="d2-current-filename" title="Active project file" aria-live="polite"></span><button type="button" id="d2-preview-delete" onclick="clearLoadedProject()" aria-label="Delete loaded project" title="Delete loaded project"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 4h4l1 3H9l1-3ZM7 7l1 13h8l1-13M10 11v6m4-6v6"/></svg></button>
 </div>
 <section class="view-fullscreen-flex" id="view-workspace">
       <!-- Left: File Browser -->
@@ -19391,7 +19393,7 @@ codePos,
       const path = (location.origin || 'file://') + (location.pathname || '/');
       let h = 2166136261;
       for (let i=0;i<path.length;i++){h^=path.charCodeAt(i);h=Math.imul(h,16777619);}
-      return 'debooger_DB2K-001_' + (h>>>0).toString(36);
+      return 'debooger_DB2K-002_' + (h>>>0).toString(36);
     })();
     const d2StoreKey = suffix => D2_STORAGE_SCOPE + '_' + suffix;
     const WORKSPACE_DELETED_KEY = d2StoreKey('deleted');
@@ -19648,14 +19650,9 @@ codePos,
       document.body.classList.remove(...allowed.map(value => 'project-' + value));
       document.body.classList.add('project-' + STATE.projectStatus);
       document.body.classList.toggle('project-valid', projectIsValid());
-      const valid = projectIsValid();
-      document.querySelectorAll('[data-project-action]').forEach(el => {
-        if ('disabled' in el) el.disabled = !valid;
-        el.setAttribute('aria-disabled', String(!valid));
-      });
-      document.querySelectorAll('[data-requires-project]').forEach(el => {
-        if ('disabled' in el) el.disabled = !valid;
-        el.setAttribute('aria-disabled', String(!valid));
+      document.querySelectorAll('[data-project-action], [data-requires-project]').forEach(el => {
+        if ('disabled' in el) el.disabled = false;
+        el.removeAttribute('aria-disabled');
       });
     }
 
@@ -19689,7 +19686,7 @@ codePos,
 
     function setMobileWorkspaceScreen(screen, options = {}) {
       if (!['preview','results'].includes(screen)) screen = 'preview';
-      if (!projectIsValid() && STATE.projectStatus !== 'restored') {
+      if (!Object.keys(STATE.files || {}).length) {
         STATE.mobileWorkspaceScreen = 'preview';
         if (!options.skipSave) switchView('view-home');
         return;
@@ -19715,7 +19712,7 @@ codePos,
     }
 
     function openFilesSheet() {
-      if (!projectIsValid() && STATE.projectStatus !== 'restored') return;
+      if (!Object.keys(STATE.files || {}).length) { showToast('Upload a project to browse its files.'); return; }
       closeWorkspacePopovers();
       document.body.classList.add('files-sheet-open');
       const pane = document.querySelector('.workspace-pane-left');
@@ -20004,7 +20001,7 @@ codePos,
     })();
 
     function switchView(viewId) {
-      if (viewId === 'view-workspace' && !projectIsValid() && STATE.projectStatus !== 'restored' && !(STATE.projectStatus === 'loading' && STATE.entryFile && STATE.files?.[STATE.entryFile])) viewId = 'view-home';
+      if (viewId === 'view-workspace' && !Object.keys(STATE.files || {}).length) viewId = 'view-home';
       STATE.activeView = viewId;
       scheduleWorkspaceSave(500);
       document.querySelectorAll('[data-desktop-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.desktopView===viewId));
@@ -22109,7 +22106,7 @@ h1.file{font-size:15px;margin:0 0 12px} pre{white-space:pre-wrap;word-break:brea
         else if (!pkg) add(pkgInfo.path, 'The package manifest exists but is not valid JSON.');
         if (!findReactSourceEntry(files)) add('src/main.tsx, src/main.jsx, src/index.tsx, src/index.jsx, or App.tsx/App.jsx', 'A React entry component is required to start the source preview.');
         if (!compiled) {
-          add('A genuine project build', 'DB2K-001 source preview is best-effort. Use the Build React / Vite action when WebContainer prerequisites are available; it honors npm/pnpm/yarn lockfiles and package-manager selection. Otherwise run the original build command in an isolated Node environment and upload its real output.');
+          add('A genuine project build', 'DB2K-002 source preview is best-effort. Use the Build React / Vite action when WebContainer prerequisites are available; it honors npm/pnpm/yarn lockfiles and package-manager selection. Otherwise run the original build command in an isolated Node environment and upload its real output.');
           const wc = getWebContainerSupport();
           if (!wc.supported) add('Full Vite Builder mode', wc.reason || 'Open D2 in a WebContainer-compatible browser session to build the missing dist automatically.');
         }
@@ -27636,7 +27633,7 @@ function b005ClearConsole(){STATE.consoleLogs=[];b005RenderConsole();}
         ['AI chat',!!document.getElementById('d2-ai-chat')],
         ['GitHub Publish',!!document.getElementById('b005-pages-modal')],
         ['React entry detection',typeof detectProjectType==='function'],
-        ['Version storage isolation',D2_STORAGE_SCOPE.includes('DB2K-001') && WORKSPACE_DB_NAME.startsWith(D2_STORAGE_SCOPE)],
+        ['Version storage isolation',D2_STORAGE_SCOPE.includes('DB2K-002') && WORKSPACE_DB_NAME.startsWith(D2_STORAGE_SCOPE)],
         ['Paste selection wiring',document.querySelectorAll('#modal-paste-code [data-paste-format]').length===5]
       ];
       try {
@@ -27660,8 +27657,8 @@ function b005ClearConsole(){STATE.consoleLogs=[];b005RenderConsole();}
 
 /* D2 engine load marker */
 window.D2_ENGINE_READY = true;
-window.D2_ENGINE_VERSION = 'DB2K-001';
-try { window.dispatchEvent(new CustomEvent('d2-engine-ready', { detail: { version: 'DB2K-001' } })); } catch (_) {}
+window.D2_ENGINE_VERSION = 'DB2K-002';
+try { window.dispatchEvent(new CustomEvent('d2-engine-ready', { detail: { version: 'DB2K-002' } })); } catch (_) {}
 
 </script>
 <dialog id="d2-ai-chat" aria-label="AI Chat and provider setup">
@@ -28410,7 +28407,7 @@ load();
       const cleanupRow=b012El('db2k-clean-row');if(cleanupRow)cleanupRow.hidden=mode!=='viewer';
       const renameArea=b012El('b030-publish-rename');
       if(renameArea)renameArea.hidden=mode!=='archive'||!B030_UPLOAD_NAMES.length;
-      if (mode === 'viewer') return 'Publishes the complete DEBOOGER DB2K-001 application as root index.html. Public URL follows the selected repository.';
+      if (mode === 'viewer') return 'Publishes the complete DEBOOGER DB2K-002 application as root index.html. Public URL follows the selected repository.';
       if (mode === 'archive') {
         const selection = [...(b012El('b026-publish-files')?.files || [])];
         const changes=[...B030_UPLOAD_RENAMES].filter(([id,target])=>B030_UPLOAD_NAMES.some(n=>n.id===id && n.name!==target));
@@ -28429,7 +28426,7 @@ load();
         // The entire self-contained Debooger application IS the index file.
         // Publish the pristine startup template, never the mutable runtime DOM.
         const html = D2_PUBLISH_SOURCE_HTML;
-        if (!html || !html.includes('DEBOOGER2000') || !html.includes('DB2K-001')) throw new Error('Could not prepare DEBOOGER DB2K-001 for upload.');
+        if (!html || !html.includes('DEBOOGER2000') || !html.includes('DB2K-002')) throw new Error('Could not prepare DEBOOGER DB2K-002 for upload.');
         if (/(?:github_pat_|ghp_)[A-Za-z0-9_]{24,}/.test(html)) throw new Error('Possible embedded GitHub token found; publishing was blocked.');
         return { entries:[{path:'index.html',content:b005ToBase64(html)}], omitted:0, rewritten:false };
       }
@@ -28604,7 +28601,7 @@ load();
       await Promise.all(Array.from({ length:files.some(file=>file.getContent)?1:Math.min(5, files.length) }, worker));
       const tree = await b012GithubApi(root + '/git/trees', { method:'POST', body:{ base_tree:commit.tree.sha, tree:[...blobs,...deletions] } });
       if (!tree?.sha) throw new Error('GitHub did not confirm the new file tree.');
-      const created = await b012GithubApi(root + '/git/commits', { method:'POST', body:{ message:'Publish website from DEBOOGER2000 DB2K-001', tree:tree.sha, parents:[ref.object.sha] } });
+      const created = await b012GithubApi(root + '/git/commits', { method:'POST', body:{ message:'Publish website from DEBOOGER2000 DB2K-002', tree:tree.sha, parents:[ref.object.sha] } });
       if (!created?.sha) throw new Error('GitHub did not confirm the commit.');
       await b012GithubApi(root + '/git/refs/heads/main', {method:'PATCH', body:{sha:created.sha,force:false} });
       const verified = await b012GithubApi(root + '/git/ref/heads/main');
