@@ -594,7 +594,7 @@
     #workspace-more-menu.tools-modal {     }
     .tools-modal-grid { grid-template-columns:1fr; gap:8px; }
     .design-learning-strip,.design-guide-grid { grid-template-columns:1fr; }
-    body:not(.project-valid) .mobile-primary-nav [data-requires-project] { opacity:.38; pointer-events:none; }
+    
     body.mobile-shell-v28 .workspace-pane-left { display:none !important; }
     body.mobile-shell-v28.workspace-view-active.files-sheet-open .workspace-pane-left {
       display:flex !important; position:fixed !important; inset:max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom)) 8px !important;
@@ -641,7 +641,7 @@ header{height:60px!important;background:rgba(255,255,255,.94)!important;border-b
 
 .d2-file-navigation{display:flex;align-items:center;border-bottom:1px solid #e2e8f0;font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#334155;min-width:0;flex:0 0 auto;}
 .d2-file-navigation[hidden]{display:none!important}.d2-file-navigation-label{font-size:12px;font-weight:600;white-space:nowrap}.d2-file-navigation select,.d2-file-navigation input{min-width:0;max-width:260px;height:29px;border:1px solid #dce3ec;background:white;color:#334155;padding:2px 7px;border-radius:4px;font-size:12px}.d2-file-navigation select{max-width:220px}.d2-file-navigation button{border:1px solid #dce3ec;background:#fff;color:#334155;padding:3px 10px;height:29px;min-height:29px;border-radius:4px;font-size:12px;cursor:pointer}.d2-file-navigation #d2-current-filename{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:60px;flex:1}
-@media(max-width:900px){.d2-file-navigation{height:36px;}.d2-file-navigation-label,.d2-file-navigation #d2-current-filename,.d2-file-navigation #d2-file-search,.d2-file-navigation #d2-file-results,.d2-file-navigation #d2-open-file{display:none}.d2-file-navigation #d2-active-html{max-width:100%;width:100%;height:28px;font-size:12px}body.workspace-view-active:not(.mobile-landscape-preview):not(.panoramic-preview) .d2-file-navigation{position:fixed;top:52px;left:0;right:0;z-index:5200}body.workspace-view-active:not(.mobile-landscape-preview):not(.panoramic-preview) .view-fullscreen-flex.active{top:88px!important}body.workspace-view-active:not(.mobile-landscape-preview):not(.panoramic-preview) .main-viewport{padding-top:88px!important}}
+@media(max-width:900px){.d2-file-navigation{height:36px;}.d2-file-navigation-label,.d2-file-navigation #d2-current-filename,.d2-file-navigation #d2-file-search,.d2-file-navigation #d2-file-results,.d2-file-navigation #d2-open-file{display:none}.d2-file-navigation #d2-active-html{max-width:100%;width:100%;height:28px;font-size:12px}}
 
 
 /* Only additions; the v31 classic desktop styling remains intact. */
@@ -1076,6 +1076,14 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
 .db2k-compare-list{background:#fff;padding:10px;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.5 Inter,system-ui,sans-serif;max-height:230px;overflow:auto;border:1px solid #e2e8f0;border-radius:6px}
 @media(max-width:700px){.db2k-compare-panels{grid-template-columns:1fr}.db2k-compare-panels iframe{height:270px}}
 </style>
+<style id="db2k-002-tools">
+#workspace-more-menu .db2k-tools-files{padding:9px 9px 12px;border-bottom:1px solid #e5eaf0}
+#workspace-more-menu .d2-file-navigation{display:flex;position:static!important;height:auto;align-items:stretch;flex-direction:column;gap:7px;border:0;background:transparent}
+#workspace-more-menu .d2-file-navigation[hidden]{display:none!important}
+#workspace-more-menu .d2-file-navigation-label{display:block!important;font-size:12px;font-weight:600;color:#64748b}
+#workspace-more-menu #d2-active-html{display:block!important;width:100%;max-width:100%!important;height:38px;font-size:13px;border:1px solid #d5dfea;border-radius:6px;color:#243447;padding:0 9px}
+.mobile-preview-controls .db2k-preview-trash{display:inline-flex;align-items:center;justify-content:center;width:40px;min-width:40px;min-height:38px;padding:6px!important;color:#475569;background:#fff;border:1px solid #d9e2ee;border-radius:7px}
+</style>
 </head>
 <body class="mobile-shell-v28 project-empty">
 
@@ -1127,7 +1135,12 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         <details class="more-tools-section" id="more-tools-details">
           <summary>Tools <span>Project, build, compare and AI</span></summary>
           <div class="more-tools-list">
-            <button type="button" onclick="toggleWorkspaceDrawer('files');closeWorkspacePopovers()">Project files</button>
+            <div class="db2k-tools-files"><div id="d2-file-navigation" class="d2-file-navigation" hidden aria-label="Project navigation">
+  <label class="d2-file-navigation-label" for="d2-active-html">Switch HTML page</label>
+  <select id="d2-active-html" aria-label="Preview HTML entry" title="Choose HTML page"><option value="">Current page</option></select>
+<span id="d2-current-filename" title="Active project file" aria-live="polite"></span>
+</div></div>
+            <button type="button" onclick="openFilesSheet()">Project files</button>
             <button type="button" onclick="triggerOpenMenu();closeWorkspacePopovers()">Add files</button>
             <button type="button" onclick="openSelectedFileEditor();closeWorkspacePopovers()">Edit source</button>
             <button type="button" onclick="promptRenameSelectedFile();closeWorkspacePopovers()">Rename file</button>
@@ -1189,16 +1202,6 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         </div>
 </div>
     </section>
-<div id="d2-file-navigation" class="d2-file-navigation" hidden aria-label="Project navigation">
-  <label class="d2-file-navigation-label" for="d2-active-html">Page</label>
-  <select id="d2-active-html" aria-label="Preview HTML entry" title="Choose HTML page"><option value="">Current page</option></select>
-  <details class="d2-file-finder"><summary>Find file</summary>
-    <input id="d2-file-search" type="search" placeholder="Search files" aria-label="Search project files" autocomplete="off">
-    <select id="d2-file-results" aria-label="Matching project files"><option value="">Select file</option></select>
-    <button type="button" id="d2-open-file" onclick="d2OpenSelectedFile()">Open</button>
-  </details>
-  <span id="d2-current-filename" title="Active project file" aria-live="polite"></span>
-</div>
 <section class="view-fullscreen-flex" id="view-workspace">
       <!-- Left: File Browser -->
       <div class="workspace-pane-left">
@@ -1228,7 +1231,7 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         <div class="mobile-preview-controls" data-project-action aria-label="Preview actions">
           <span class="mobile-viewer-title" id="mobile-viewer-title">Preview</span>
           <button type="button" onclick="openPreviewInBrowser()" aria-label="Open preview in browser">Browser</button>
-          <button type="button" onclick="openFilesSheet()" aria-label="Open project files">Files</button>
+          <button type="button" class="db2k-preview-trash" onclick="deleteSelectedProjectFile()" aria-label="Delete selected preview file" title="Delete selected file"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l.8 13h8.4L17 7M10 11v6M14 11v6"/></svg></button>
 
         </div>
         <!-- Render Stage -->
@@ -19942,6 +19945,17 @@ codePos,
           e.preventDefault();
           const dx = e.touches[0].clientX - lastX;
           const dy = e.touches[0].clientY - lastY;
+          const frame = document.getElementById('live-sandbox-frame');
+          if (frame && STATE.previewUserScale <= 1.01 && Math.abs(dy) >= Math.abs(dx)) {
+            const rect=frame.getBoundingClientRect();
+            if(rect.width>1 && rect.height>1){
+              const x=(e.touches[0].clientX-rect.left)*frame.offsetWidth/rect.width;
+              const y=(e.touches[0].clientY-rect.top)*frame.offsetHeight/rect.height;
+              frame.contentWindow?.postMessage({type:'DEBOOGER_FORWARD_SCROLL',x,y,dx:-dx,dy:-dy},'*');
+              lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;moved=true;
+              return;
+            }
+          }
           if (Math.abs(dx) > 2 || Math.abs(dy) > 2) moved = true;
           STATE.previewPanX = (STATE.previewPanX || 0) + dx;
           STATE.previewPanY = (STATE.previewPanY || 0) + dy;
@@ -21530,7 +21544,19 @@ let a=String(nums[3]).endsWith('%')?parseFloat(nums[3])/100:parseFloat(nums[3]);
               if(e.data.type==='DEBOOGER_INSPECT_MODE'){inspectEnabled=Boolean(e.data.enabled);d2Locked=null;d2LockedEl=null;d2Paint(null,0,0);document.documentElement.style.cursor=inspectEnabled?'crosshair':'';}
               if(e.data.type==='DEBOOGER_INSPECT_CLEAR'){d2Locked=null;d2LockedEl=null;d2Paint(null,0,0);}
               if(e.data.type==='DEBOOGER_INSPECT_LOCK_SELECTOR'&&e.data.selector){try{const el=document.querySelector(e.data.selector);if(el){const sel=d2ElementSelection(el,e.data.kind||'container');sel.page=sourceFile;sel.viewport={width:innerWidth,height:innerHeight};sel.candidates=d2CandidatesAt(el);d2Locked=sel;d2LockedEl=el;const r=el.getBoundingClientRect();d2Paint(sel,r.right,r.bottom);}}catch(_){ }}
-              if(e.data.type==='DEBOOGER_FORWARD_TAP'){try{const x=Number(e.data.x)||0,y=Number(e.data.y)||0;const el=document.elementFromPoint(x,y);if(el)el.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window,clientX:x,clientY:y}));}catch(_){ }}
+              if(e.data.type==='DEBOOGER_FORWARD_SCROLL'){try{
+ const x=Number(e.data.x)||0,y=Number(e.data.y)||0,dx=Number(e.data.dx)||0,dy=Number(e.data.dy)||0;
+ let el=document.elementFromPoint(x,y),moved=false;
+ while(el&&el.nodeType===1){
+  const st=getComputedStyle(el);
+  const canY=/(auto|scroll|overlay)/.test(st.overflowY)&&el.scrollHeight>el.clientHeight+1;
+  const canX=/(auto|scroll|overlay)/.test(st.overflowX)&&el.scrollWidth>el.clientWidth+1;
+  if(canY||canX){const y0=el.scrollTop,x0=el.scrollLeft;if(canY)el.scrollTop+=dy;if(canX)el.scrollLeft+=dx;if(y0!==el.scrollTop||x0!==el.scrollLeft){moved=true;break;}}
+  el=el.parentElement;
+ }
+ if(!moved)window.scrollBy(dx,dy);
+}catch(_){}}
+if(e.data.type==='DEBOOGER_FORWARD_TAP'){try{const x=Number(e.data.x)||0,y=Number(e.data.y)||0;const el=document.elementFromPoint(x,y);if(el)el.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window,clientX:x,clientY:y}));}catch(_){ }}
               if(e.data.type==='DEBOOGER_HIGHLIGHT_SELECTOR'&&e.data.selector){let ok=false;try{const el=document.querySelector(e.data.selector);if(el){ok=true;try{el.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}catch(_){el.scrollIntoView&&el.scrollIntoView();}const oldOutline=el.style.outline,oldOffset=el.style.outlineOffset;el.style.outline='3px solid #2563eb';el.style.outlineOffset='3px';setTimeout(function(){try{el.style.outline=oldOutline;el.style.outlineOffset=oldOffset;}catch(_){}},3500);}}catch(_){ }post({type:'DEBOOGER_HIGHLIGHT_RESULT',ok:ok,selector:String(e.data.selector||'')});}
             });
             function runDomAudit(){
@@ -26519,7 +26545,8 @@ Use saved source hints only when marked exact or verified. If a marker has no sa
         entry.dataset.signature = signature;
       }
       entry.value = available.includes(current) ? current : '';
-      document.getElementById('d2-current-filename').textContent = STATE.selectedFile || current || STATE.projectName || 'Project';
+      const currentLabel=document.getElementById('d2-current-filename');
+      if(currentLabel)currentLabel.textContent = STATE.selectedFile || current || STATE.projectName || 'Project';
       d2RefreshFileSearch();
     }
     function d2RefreshFileSearch() {
