@@ -23024,13 +23024,10 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
           replacements.sort((a,b) => b.start - a.start).forEach(change => {
             rewritten = rewritten.slice(0, change.start) + change.value + rewritten.slice(change.end);
           });
-          return sealImportSpecifiers(rewritten, replaceSpec);
+          return rewritten;
         }
       }
-      return sealImportSpecifiers(original
-        .replace(/\bfrom\s*(['"])([^'"]+)\1/g, (m, q, spec) => 'from ' + q + replaceSpec(spec) + q)
-        .replace(/\bimport\s*(['"])([^'"]+)\1/g, (m, q, spec) => 'import ' + q + replaceSpec(spec) + q)
-        .replace(/\bimport\s*\(\s*(['"])([^'"]+)\1/g, (m, q, spec) => 'import(' + q + replaceSpec(spec) + q), replaceSpec);
+      throw new Error('JavaScript import parser is unavailable or the compiled module has invalid syntax: ' + fromPath + '. Source imports were not rewritten to avoid corrupting the file.');
     }
 
     async function loadSucraseTransformer() {
@@ -23191,30 +23188,20 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
       });
     }
 
-    function collectReactExternalPackages(files, aliases, visitedPaths) {
+    function collectReactExternalPackages(modules) {
       const found = new Set();
-      const pkg = readProjectPackageJson(files).pkg || {};
-      const canUseEmbeddedReact = d2EmbeddedReactSupported(pkg);
-      Object.entries(files || {}).forEach(([path, file]) => {
-        if (!file || file.binary || !/\.(?:mjs|cjs|js|jsx|ts|tsx)$/i.test(path) || /(?:^|\/)(?:node_modules|dist|build|out)(?:\/|$)/i.test(path)) return;
-        // Only dependencies reached from the real HTML entry belong to the preview.
-        // Scripts, test fixtures, and archived copies must not pollute runtime diagnostics.
-        if (visitedPaths && !visitedPaths.has(normalizeVirtualPath(path))) return;
-        if (/(?:^|\/)(?:vite\.config|vitest\.config|tailwind\.config|postcss\.config|eslint\.config)(?:\.[^/]+)?$/i.test(path)) return;
-        const source = getVirtualFileText(file);
-        const refs = [];
-        source.replace(/\b(?:from|import)\s*(?:\(\s*)?["']([^"'\n]+)["']/g, (_, spec) => { refs.push(spec); return _; });
-        source.replace(/\brequire\s*\(\s*["']([^"'\n]+)["']\s*\)/g, (_, spec) => { refs.push(spec); return _; });
-        refs.forEach(spec => {
-          const raw = String(spec || '').split('?')[0].trim();
-          if (!raw || specifierIsLocal(raw, aliases) || /^(?:https?:|data:|blob:)/i.test(raw)) return;
-          if (/^@fontsource(?:-variable)?\/[^/]+\/[^/]+\.css$/i.test(raw)) return;
-          if (d2EmbeddedReactSpecifier(raw)) {
-            if (canUseEmbeddedReact) return;
-            found.add(raw.startsWith('react-dom') ? 'react-dom' : raw.startsWith('react') ? 'react' : raw);
-            return;
-          }
-          found.add(raw);
+      if (!globalThis.acorn || typeof globalThis.acorn.parse !== 'function') return [];
+      Object.values(modules || {}).forEach(source => {
+        let ast;
+        try { ast = globalThis.acorn.parse(String(source || ''), {ecmaVersion:'latest',sourceType:'module',allowHashBang:true}); }
+        catch (_) { return; }
+        walkAcornAst(ast, node => {
+          const literal = (node.type === 'ImportDeclaration' || node.type === 'ExportAllDeclaration' || node.type === 'ExportNamedDeclaration') ? node.source : (node.type === 'ImportExpression' ? node.source : null);
+          const spec = literal ? astLiteralString(literal) : null;
+          if (typeof spec !== 'string' || !/^https:\/\/esm\.sh\//i.test(spec)) return;
+          const path = spec.replace(/^https:\/\/esm\.sh\//i,'').split('?')[0];
+          const packageName = path.startsWith('@') ? path.split('/').slice(0,2).join('/') : path.split('/')[0];
+          if (packageName) found.add(packageName);
         });
       });
       return [...found].sort();
@@ -23286,6 +23273,10 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
         }
         let source = getVirtualFileText(file);
         source = transpileReactSource(sucrase.transform, norm, source, reactMajor);
+        if (globalThis.acorn && typeof globalThis.acorn.parse === 'function') {
+          try { globalThis.acorn.parse(source,{ecmaVersion:'latest',sourceType:'module',allowHashBang:true,locations:true}); }
+          catch(err) { throw new Error('React module syntax in ' + norm + ': ' + String(err.message || err)); }
+        }
         source = expandImportMetaGlob(source, norm, files, aliases);
         source = rewriteImportMetaUrls(source, norm, files, aliases);
         source = rewriteEnvAndMeta(source, env);
@@ -23309,7 +23300,7 @@ const parts = normalizeVirtualPath(path).split('/').filter(Boolean);
         }
       });
 
-      const externalPackages = collectReactExternalPackages(files, aliases, seen);
+      const externalPackages = collectReactExternalPackages(modules);
       const declaredReactVersion = npmVersion(pkg, 'react', D2_EMBEDDED_REACT_VERSION);
       if (!useEmbeddedReact) addConsoleLog('info', '[REACT] React ' + declaredReactVersion + ' requires its version-matched network runtime or a compiled build. Offline React 18 will not be substituted.');
       const entryId = 'd2:' + normalizeVirtualPath(found.entry);
