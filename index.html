@@ -633,7 +633,7 @@ header{height:60px!important;background:rgba(255,255,255,.94)!important;border-b
 
 /* D2 Classic keeps v31 font, palette, and desktop labels; only new features below. */
 #d2-preview-status{position:absolute;z-index:9;left:50%;bottom:22px;transform:translateX(-50%);width:max-content;max-width:min(560px,calc(100% - 28px));padding:10px 14px;background:#fff;color:#475569;border:1px solid #cbd5e1;border-radius:7px;box-shadow:0 4px 18px rgba(15,23,42,.12);font-size:12px;text-align:center;pointer-events:none}
-#d2-preview-status[hidden]{display:none!important}#d2-preview-status.d2-preview-failed{color:#9f1239;border-color:#fda4af}
+#d2-preview-status[hidden]{display:none!important}#d2-preview-status.d2-preview-failed{color:#9f1239;border-color:#fda4af;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;max-height:76px;overflow:hidden;line-height:1.4;text-align:left}
 #d2-ai-chat{border:1px solid #cbd5e1;padding:0;background:#fff;color:#152238;box-shadow:0 18px 60px rgba(15,23,42,.26);}#d2-ai-chat::backdrop{background:rgba(15,23,42,.4)}#d2-ai-chat[open]{}.d2-chat-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;border-bottom:1px solid #e2e8f0}.d2-chat-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:12px 16px;border-bottom:1px solid #e2e8f0}.d2-chat-settings label{display:flex;flex-direction:column;gap:4px;font-size:12px}.d2-chat-settings input,.d2-chat-settings select{min-width:0;width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#152238}.d2-chat-disclaimer{grid-column:1/-1;font-size:11px;color:#64748b}#d2-ai-messages{flex:1;min-height:0;overflow:auto;padding:14px 16px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}#d2-ai-messages>div{padding:9px 10px;margin:0 0 8px;border:1px solid #e2e8f0;border-radius:7px}#d2-ai-send-form{display:flex;gap:8px;padding:12px;border-top:1px solid #e2e8f0}#d2-ai-query{flex:1;min-height:60px;max-height:130px;resize:vertical;padding:8px;border:1px solid #cbd5e1;border-radius:6px;color:#152238;background:#fff}#d2-ai-chat button{background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:7px 10px;color:#152238;cursor:pointer}#d2-ai-submit{align-self:end!important;background:#087f6e!important;color:#fff!important}
 @media(max-width:900px){.d2-chat-settings{grid-template-columns:1fr}#d2-ai-chat{}.top-nav{overflow-x:auto;scrollbar-width:none;justify-content:flex-start}.top-nav::-webkit-scrollbar{display:none}}
 @media(min-width:901px){.top-nav{display:flex!important;overflow-x:auto;flex-wrap:nowrap}.top-nav .workspace-icon-btn{white-space:nowrap}}
@@ -19897,6 +19897,7 @@ codePos,
       let lastX = 0;
       let lastY = 0;
       let moved = false;
+      let scrollGesture = false;
       const onStage = () => previewUsesDesktopFrame() || (STATE.devicePreset === 'mobile' && window.matchMedia('(pointer: coarse)').matches);
       const applyPinchPan = (clientX, clientY, nextUserScale) => {
         const oldScale = STATE.previewFit * STATE.previewUserScale;
@@ -19925,6 +19926,7 @@ codePos,
       target.addEventListener('touchstart', (e) => {
         if (!onStage() || !e.touches.length) return;
         moved = false;
+        scrollGesture = false;
         lastX = e.touches[0].clientX;
         lastY = e.touches[0].clientY;
         startPanX = STATE.previewPanX || 0;
@@ -19950,14 +19952,29 @@ codePos,
         }
         if (e.touches.length === 1) {
           e.preventDefault();
-          const dx = e.touches[0].clientX - lastX;
-          const dy = e.touches[0].clientY - lastY;
+          const finger = e.touches[0];
+          const dx = finger.clientX - lastX;
+          const dy = finger.clientY - lastY;
           if (Math.abs(dx) > 2 || Math.abs(dy) > 2) moved = true;
-          STATE.previewPanX = (STATE.previewPanX || 0) + dx;
-          STATE.previewPanY = (STATE.previewPanY || 0) + dy;
-          lastX = e.touches[0].clientX;
-          lastY = e.touches[0].clientY;
-          applyPreviewLayout();
+          if (!scrollGesture && Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 2) scrollGesture = true;
+          if (scrollGesture) {
+            const frame = document.getElementById('live-sandbox-frame');
+            if (frame) {
+              const bounds = frame.getBoundingClientRect();
+              const scaleX = frame.offsetWidth / Math.max(1,bounds.width);
+              const scaleY = frame.offsetHeight / Math.max(1,bounds.height);
+              frame.contentWindow?.postMessage({type:'DEBOOGER_FORWARD_SCROLL',
+                x:(finger.clientX-bounds.left)*scaleX,
+                y:(finger.clientY-bounds.top)*scaleY,
+                dx:-dx*scaleX,dy:-dy*scaleY},'*');
+            }
+          } else {
+            STATE.previewPanX = (STATE.previewPanX || 0) + dx;
+            STATE.previewPanY = (STATE.previewPanY || 0) + dy;
+            applyPreviewLayout();
+          }
+          lastX = finger.clientX;
+          lastY = finger.clientY;
         }
       }, { passive: false });
       target.addEventListener('touchend', (e) => {
@@ -19981,7 +19998,7 @@ codePos,
       toggleVisualInspectMode();
     }
     function openAuditFromNav() {
-      if (!projectIsValid()) { showToast('Upload a project to inspect its audit.'); return; }
+      if (!Object.keys(STATE.files || {}).length) { showToast('Upload a project to inspect its audit.'); return; }
       if (STATE.activeView !== 'view-workspace') switchView('view-workspace');
       toggleCombinedAudit();
     }
@@ -21541,6 +21558,30 @@ let a=String(nums[3]).endsWith('%')?parseFloat(nums[3])/100:parseFloat(nums[3]);
               if(e.data.type==='DEBOOGER_INSPECT_CLEAR'){d2Locked=null;d2LockedEl=null;d2Paint(null,0,0);}
               if(e.data.type==='DEBOOGER_INSPECT_LOCK_SELECTOR'&&e.data.selector){try{const el=document.querySelector(e.data.selector);if(el){const sel=d2ElementSelection(el,e.data.kind||'container');sel.page=sourceFile;sel.viewport={width:innerWidth,height:innerHeight};sel.candidates=d2CandidatesAt(el);d2Locked=sel;d2LockedEl=el;const r=el.getBoundingClientRect();d2Paint(sel,r.right,r.bottom);}}catch(_){ }}
               if(e.data.type==='DEBOOGER_FORWARD_TAP'){try{const x=Number(e.data.x)||0,y=Number(e.data.y)||0;const el=document.elementFromPoint(x,y);if(el)el.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window,clientX:x,clientY:y}));}catch(_){ }}
+              if(e.data.type==='DEBOOGER_FORWARD_SCROLL'){
+                try {
+                  var dx=Number(e.data.dx)||0,dy=Number(e.data.dy)||0;
+                  var node=document.elementFromPoint(Number(e.data.x)||0,Number(e.data.y)||0);
+                  var scrolled=false;
+                  while(node&&node!==document.documentElement){
+                    if(node.nodeType===1){
+                      var css=getComputedStyle(node);
+                      var sy=/(auto|scroll|overlay)/.test(css.overflowY)&&node.scrollHeight>node.clientHeight+1;
+                      var sx=/(auto|scroll|overlay)/.test(css.overflowX)&&node.scrollWidth>node.clientWidth+1;
+                      if(sy||sx){
+                        var by=node.scrollTop,bx=node.scrollLeft;
+                        node.scrollTop+=sy?dy:0;node.scrollLeft+=sx?dx:0;
+                        if(node.scrollTop!==by||node.scrollLeft!==bx){scrolled=true;break;}
+                      }
+                    }
+                    node=node.parentElement;
+                  }
+                  if(!scrolled){
+                    var root=document.scrollingElement||document.documentElement;
+                    root.scrollTop+=dy;root.scrollLeft+=dx;
+                  }
+                }catch(_){}
+              }
               if(e.data.type==='DEBOOGER_HIGHLIGHT_SELECTOR'&&e.data.selector){let ok=false;try{const el=document.querySelector(e.data.selector);if(el){ok=true;try{el.scrollIntoView({block:'center',inline:'center',behavior:'smooth'});}catch(_){el.scrollIntoView&&el.scrollIntoView();}const oldOutline=el.style.outline,oldOffset=el.style.outlineOffset;el.style.outline='3px solid #2563eb';el.style.outlineOffset='3px';setTimeout(function(){try{el.style.outline=oldOutline;el.style.outlineOffset=oldOffset;}catch(_){}},3500);}}catch(_){ }post({type:'DEBOOGER_HIGHLIGHT_RESULT',ok:ok,selector:String(e.data.selector||'')});}
             });
             function runDomAudit(){
@@ -23370,7 +23411,7 @@ var bootId = ${bootIdJson};
 var wantTw = ${tailwind ? 'true' : 'false'};
 var d2ExternalPackages = ${externalPackagesJson};
 function d2Need(m){var text=String(m||'');var lower=text.toLowerCase();var need='A deployable compiled output folder, or the missing file/dependency named above.';var marker='Missing file:';var i=text.indexOf(marker);if(i>=0){var tail=text.slice(i+marker.length);need='Needed file: '+tail.split(String.fromCharCode(10))[0].trim();}else if(d2ExternalPackages.length&&(lower.indexOf('failed to fetch dynamically imported module')>=0||lower.indexOf('networkerror')>=0||lower.indexOf('err_failed')>=0||lower.indexOf('data:text/javascript')>=0)){need='Needed project package'+(d2ExternalPackages.length>1?'s':'')+': '+d2ExternalPackages.join(', ')+'. Internet fallback is blocked or unavailable.';}else if(lower.indexOf('failed to fetch dynamically imported module')>=0||lower.indexOf('networkerror')>=0||lower.indexOf('err_failed')>=0){need='Needed: internet access for an uncommon project package, or upload the project’s compiled output folder.';}else{var phrases=['failed to resolve module specifier','cannot find module','cannot find package'];var found='';for(var p=0;p<phrases.length&&!found;p++){var pos=lower.indexOf(phrases[p]);if(pos>=0){var rest2=text.slice(pos+phrases[p].length).trim();var q2=rest2.charAt(0);if(q2==='"'||q2==="'"){var qend=rest2.indexOf(q2,1);found=qend>1?rest2.slice(1,qend):rest2.slice(1);}else found=rest2.split(' ')[0];}}if(found)need='Needed package/module: '+found;else if(lower.indexOf('process is not defined')>=0||lower.indexOf('require is not defined')>=0||lower.indexOf('__dirname is not defined')>=0||lower.indexOf('node:')>=0||lower.indexOf(' fs ')>=0)need='Needed: a real compiled browser build because this source uses Node-only behavior.';else if(lower.indexOf('fetch')>=0||lower.indexOf('network')>=0||lower.indexOf('internet')>=0||lower.indexOf('cdn')>=0||lower.indexOf('esm.sh')>=0||lower.indexOf('jsdelivr')>=0)need='Needed: internet access for the uncommon package named above, or upload the project’s compiled output folder.';}return need;}
-function d2Fail(e){var raw=String(e&&e.message||e);var stack=String(e&&e.stack||'');var name=String(e&&e.name||'Error');var m=raw;if(/Unexpected identifier .https/i.test(raw))m='Module JavaScript syntax error: '+raw+'. Reachable external packages: '+(d2ExternalPackages.join(', ')||'(none detected)')+'. This list is not proof of which module caused the error; inspect the error stack/network URL or build with the project lockfile.';if(m.length>900)m='Preview module failed: '+raw.slice(0,860)+'…';var safe=m.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');var need=d2Need(raw).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');document.body.style.background='#fff';document.body.innerHTML='<div style="padding:28px;max-width:620px;font-family:Inter,sans-serif;color:#0f172a"><h2 style="margin:0 0 8px;font-size:18px">Preview stopped</h2><p style="margin:0;color:#475569;line-height:1.5">'+safe+'</p><h3 style="margin:18px 0 6px;font-size:14px">What this project needs</h3><p style="margin:0;color:#475569;line-height:1.5">'+need+'</p></div>';try{parent.postMessage({type:"RUNTIME_ERROR",kind:"exception",message:m,stack:stack,errorName:name,phase:'react-module-bootstrap',previewGeneration:window.__D2_PREVIEW_GENERATION},"*");}catch(_){} }
+function d2Fail(e){var raw=String(e&&e.message||e);var stack=String(e&&e.stack||'');var name=String(e&&e.name||'Error');var m=raw;if(/Unexpected identifier .https/i.test(raw))m='Module JavaScript syntax error: '+raw+'. The package list alone does not prove which file caused it. Inspect the actual error and compile the source if needed.';if(m.length>900)m='Preview module failed: '+raw.slice(0,860)+'…';var safe=m.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');var need=(/SyntaxError|Unexpected identifier|Expected .}. to end/i.test(raw)?'Repair the source JavaScript or TSX syntax, or supply the project compiled dist/build folder from matching dependencies.':d2Need(raw)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');document.body.style.background='#fff';document.body.innerHTML='<div style="padding:28px;max-width:620px;font-family:Inter,sans-serif;color:#0f172a"><h2 style="margin:0 0 8px;font-size:18px">Preview stopped</h2><p style="margin:0;color:#475569;line-height:1.5">'+safe+'</p><h3 style="margin:18px 0 6px;font-size:14px">What this project needs</h3><p style="margin:0;color:#475569;line-height:1.5">'+need+'</p></div>';try{parent.postMessage({type:"RUNTIME_ERROR",kind:"exception",message:m,stack:stack,errorName:name,phase:'react-module-bootstrap',previewGeneration:window.__D2_PREVIEW_GENERATION},"*");}catch(_){} }
 function d2Tw(){if(!wantTw)return;var tw=document.createElement("script");tw.type="module";tw.src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4";document.body.appendChild(tw);}
 import(bootId).then(function(){
   var attempts=0;
@@ -24276,7 +24317,7 @@ setTimeout(function(){if(document.documentElement.getAttribute("data-d2-mounted"
       else toggleWorkspaceDrawer('diagnostics',open);
       if (open) {
         document.querySelectorAll('#findings-list .finding-card.audit-high, #findings-list .finding-card.audit-medium').forEach(card => { card.open = true; });
-        if (document.querySelector('#b005-console .b005-log-line[data-severity="err"],#b005-console .b005-log-line[data-severity="error"]')) document.getElementById('audit-console-details')?.setAttribute('open','');
+        
       }
       const btn=document.getElementById('visual-editor-audit-toggle');if(btn)btn.setAttribute('aria-expanded',String(open));
       const mobileBtn=document.getElementById('visual-editor-mobile-audit');if(mobileBtn)mobileBtn.setAttribute('aria-expanded',String(open));
