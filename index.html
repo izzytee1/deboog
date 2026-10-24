@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-  <title>DEBOOGER2000 | Visual Project Viewer & Inspector — DB2K-001</title>
-  <!-- DEBOOGER2000 DB2K-001: standalone visual project viewer, inspector, auditor, and exporter. -->
+  <title>DEBOOGER2000 | Visual Project Viewer & Inspector — DB2K-002</title>
+  <!-- DEBOOGER2000 DB2K-002: standalone visual project viewer, inspector, auditor, and exporter. -->
   <!-- Bundled ZIP engine: JSZip 3.10.1 (MIT/GPLv3 dual licensed; upstream license notice retained below). -->
   
   
@@ -1049,8 +1049,8 @@ body.workspace-view-active .topbar-logo{display:flex!important}
 .audit-nav-count{display:none;align-items:center;justify-content:center;min-width:16px;height:16px;margin-left:4px;padding:0 4px;border-radius:5px;font-size:10px;font-weight:700;line-height:1;vertical-align:middle}
 body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-good{background:#dcfce7;color:#067647}.audit-nav-count.audit-warn{background:#fff0cc;color:#a66700}.audit-nav-count.audit-bad{background:#fee2e2;color:#b42318}
 .audit-premium-score{padding:16px 20px!important;align-items:center!important;gap:15px!important;border-bottom:1px solid #e8edf2!important}
-.audit-premium-score #health-gauge{display:grid!important;place-items:center;width:74px!important;height:74px!important;flex:0 0 74px!important;border:5px solid #cbd5e1!important;border-radius:50%!important;font-size:18px!important;font-weight:650!important;line-height:1.15;text-align:center;color:#334155;white-space:normal}
-.audit-premium-score #health-gauge.score-good{border-color:#13a474!important}.audit-premium-score #health-gauge.score-warn{border-color:#e6a740!important}.audit-premium-score #health-gauge.score-bad{border-color:#d85757!important}
+.audit-premium-score #health-gauge{display:block!important;width:auto!important;height:auto!important;min-width:0!important;flex:0 0 auto!important;border:none!important;border-radius:0!important;padding:0!important;font-size:25px!important;font-weight:600!important;letter-spacing:-.6px!important;color:#243447!important;line-height:1.25;text-align:left;white-space:normal}
+
 .audit-score-copy{min-width:0}.audit-score-copy h4{font-size:15px!important;font-weight:650!important;margin:0!important}.audit-score-copy p{margin:4px 0 0!important;font-size:12px!important;color:#64748b!important}
 .audit-issues-title{padding:15px 20px 8px!important}.audit-issues-title h3{font-size:14px!important}.audit-issues-title h3 span{font-weight:500;color:#64748b}.audit-text-action{background:transparent!important;border:0!important;min-height:25px!important;padding:0!important;color:#087f6e!important;font-size:12px!important;font-weight:600!important}
 .workspace-pane-right .b006-audit-filters{padding:4px 18px 10px!important;gap:14px!important;flex-wrap:nowrap!important;overflow-x:auto!important}.workspace-pane-right .b006-audit-filters button{background:transparent!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0!important;padding:6px 1px!important;white-space:nowrap!important;font-size:12px!important}.workspace-pane-right .b006-audit-filters button.active{color:#087f6e!important;border-bottom-color:#087f6e!important}
@@ -1084,6 +1084,21 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
 #workspace-more-menu #d2-active-html{display:block!important;width:100%;max-width:100%!important;height:38px;font-size:13px;border:1px solid #d5dfea;border-radius:6px;color:#243447;padding:0 9px}
 .mobile-preview-controls .db2k-preview-trash{display:inline-flex;align-items:center;justify-content:center;width:40px;min-width:40px;min-height:38px;padding:6px!important;color:#475569;background:#fff;border:1px solid #d9e2ee;border-radius:7px}
 </style>
+<style id="db2k-002-audit">
+.workspace-pane-right #findings-list{display:flex;flex-direction:column;gap:0!important;padding:0 16px 16px!important;background:#fff}
+.workspace-pane-right .finding-card{margin:0!important;border:0!important;border-bottom:1px solid #e7edf4!important;border-radius:0!important;box-shadow:none!important;background:#fff!important}
+.workspace-pane-right .finding-card:before{display:none!important}
+.workspace-pane-right .finding-card .b006-finding-head{padding:15px 0 5px!important;gap:10px}
+.workspace-pane-right .finding-card .b006-finding-title{font-size:13px!important;line-height:1.5;color:#1d2939}
+.workspace-pane-right .finding-card .b006-finding-body{padding:3px 0 16px!important;font-size:12px;line-height:1.6}
+.workspace-pane-right .finding-card .b006-finding-body p{margin:3px 0 5px}
+.workspace-pane-right .audit-score-card,.workspace-pane-right .audit-issues-title{background:#fff}
+.workspace-pane-right .b005-diagnostics{margin:4px 16px 16px!important;border-top:1px solid #e7edf4;border-left:0;border-right:0;border-bottom:0;border-radius:0}
+.workspace-pane-right #b005-console{height:min(32dvh,280px)!important;min-height:96px!important}
+.workspace-pane-right .db2k-audit-more{border-top:1px solid #e7edf4;margin:0 16px;color:#506174;font-size:12px}
+.workspace-pane-right .db2k-audit-more>summary{padding:12px 0;cursor:pointer;font-weight:600;list-style:none}
+#d2-preview-status.d2-preview-failed{font-size:12px!important;line-height:1.4;max-height:145px;overflow:auto;max-width:min(600px,calc(100% - 28px))}
+</style>
 </head>
 <body class="mobile-shell-v28 project-empty">
 
@@ -1096,7 +1111,7 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         <div class="topbar-logo">
           <div class="logo-mark">D2</div>
           <div class="logo-text">DEBOOGER<span style="color:var(--primary)">2000</span></div>
-          <span class="build-mark" aria-label="Build DB2K-001">DB2K-001</span>
+          <span class="build-mark" aria-label="Build DB2K-002">DB2K-002</span>
         </div>
       </div>
       <nav class="top-nav" aria-label="Main">
@@ -1295,9 +1310,10 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
           </div>
           <div class="findings-container" id="findings-list"><p class="b006-audit-empty">No issues found yet.</p></div>
           <details class="b005-diagnostics" id="audit-console-details"><summary>Console &amp; runtime evidence <span id="audit-console-count"></span></summary><div class="b005-console-actions"><button type="button" onclick="b005CopyConsole()">Copy evidence</button><button type="button" onclick="b005ClearConsole()">Clear</button></div><div id="b005-console" aria-live="polite">No console evidence collected yet.</div></details>
-          <details class="score-method audit-fold"><summary>Score method &amp; file scores</summary><div class="audit-method-body">Score uses verified completed checks only. Passed ÷ completed checks × 100, less confirmed finding penalties (high 12, medium 5, low 2 per occurrence). Unverified and unavailable checks are not passes. File scores start at 100 with confirmed severity deductions (high 30, medium 15, low 7 per occurrence). A score is not a guarantee of quality.<div id="file-scores-list"></div></div></details>
+          <details class="db2k-audit-more"><summary>Additional audit details</summary><div class="db2k-audit-more-body"><details class="score-method audit-fold"><summary>Score method &amp; file scores</summary><div class="audit-method-body">Score uses verified completed checks only. Passed ÷ completed checks × 100, less confirmed finding penalties (high 12, medium 5, low 2 per occurrence). Unverified and unavailable checks are not passes. File scores start at 100 with confirmed severity deductions (high 30, medium 15, low 7 per occurrence). A score is not a guarantee of quality.<div id="file-scores-list"></div></div></details>
           <details class="audit-fold" id="upload-notes-details"><summary>Upload &amp; preview notes</summary><div id="upload-debug-box" class="upload-debug-box" hidden></div></details>
           <details class="audit-fold"><summary>Selected element details</summary><div id="visual-inspector-details"></div><div id="visual-source-hint"></div></details>
+          </div></details>
           <div id="b005-baseline-status" class="b005-baseline-status" role="status"></div>
           <div class="audit-quick-actions" aria-label="AI repair handoff"><button type="button" onclick="copyAiHandoffPrompt()">Copy repair</button><button type="button" onclick="exportAuditReport()">Download audit</button><button type="button" onclick="openAiDock('repair')">Open Repair</button></div>
         </div>
@@ -19394,7 +19410,7 @@ codePos,
       const path = (location.origin || 'file://') + (location.pathname || '/');
       let h = 2166136261;
       for (let i=0;i<path.length;i++){h^=path.charCodeAt(i);h=Math.imul(h,16777619);}
-      return 'debooger_DB2K-001_' + (h>>>0).toString(36);
+      return 'debooger_DB2K-002_' + (h>>>0).toString(36);
     })();
     const d2StoreKey = suffix => D2_STORAGE_SCOPE + '_' + suffix;
     const WORKSPACE_DELETED_KEY = d2StoreKey('deleted');
@@ -19985,8 +20001,9 @@ codePos,
       toggleVisualInspectMode();
     }
     function openAuditFromNav() {
-      if (!projectIsValid()) { showToast('Upload a project to inspect its audit.'); return; }
+      if (!Object.keys(STATE.files || {}).length) { showToast('Upload a project to inspect its audit.'); return; }
       if (STATE.activeView !== 'view-workspace') switchView('view-workspace');
+      reRunAudit();
       toggleCombinedAudit();
     }
     function openAiDock(kind) {
@@ -22135,7 +22152,7 @@ h1.file{font-size:15px;margin:0 0 12px} pre{white-space:pre-wrap;word-break:brea
         else if (!pkg) add(pkgInfo.path, 'The package manifest exists but is not valid JSON.');
         if (!findReactSourceEntry(files)) add('src/main.tsx, src/main.jsx, src/index.tsx, src/index.jsx, or App.tsx/App.jsx', 'A React entry component is required to start the source preview.');
         if (!compiled) {
-          add('A genuine project build', 'DB2K-001 source preview is best-effort. Use the Build React / Vite action when WebContainer prerequisites are available; it honors npm/pnpm/yarn lockfiles and package-manager selection. Otherwise run the original build command in an isolated Node environment and upload its real output.');
+          add('A genuine project build', 'DB2K-002 source preview is best-effort. Use the Build React / Vite action when WebContainer prerequisites are available; it honors npm/pnpm/yarn lockfiles and package-manager selection. Otherwise run the original build command in an isolated Node environment and upload its real output.');
           const wc = getWebContainerSupport();
           if (!wc.supported) add('Full Vite Builder mode', wc.reason || 'Open D2 in a WebContainer-compatible browser session to build the missing dist automatically.');
         }
@@ -23395,7 +23412,7 @@ setTimeout(function(){if(document.documentElement.getAttribute("data-d2-mounted"
           settle({ok:!!detail.ok,message:detail.message});
         };
         window.addEventListener('d2-preview-settled',listener);
-        mountTimer=setTimeout(() => settle({ok:false,message:'React source did not mount within 25 seconds. Check the Audit for missing files or dependencies.'}),25000);
+        mountTimer=setTimeout(() => settle({ok:false,message:'React did not mount within 25 seconds. The Viewer shows available errors; an unresolved import, network request, or application startup may have blocked rendering.'}),25000);
       });
       // A previous upload's compiler is never allowed to replace this session.
       frame.srcdoc = attachPreviewInterceptor(loadingHtml || constructReactPreviewShell('Resolving React source.'),interceptor);
@@ -23804,7 +23821,7 @@ setTimeout(function(){if(document.documentElement.getAttribute("data-d2-mounted"
       b005RenderConsole();
       if(item.level==='err' || item.level==='error') {
         renderUploadDebugBox();
-        document.getElementById('audit-console-details')?.setAttribute('open', '');
+        // Count the error without forcing the console open.
       }
       return item;
     }
@@ -24260,7 +24277,7 @@ setTimeout(function(){if(document.documentElement.getAttribute("data-d2-mounted"
       else toggleWorkspaceDrawer('diagnostics',open);
       if (open) {
         document.querySelectorAll('#findings-list .finding-card.audit-high, #findings-list .finding-card.audit-medium').forEach(card => { card.open = true; });
-        if (document.querySelector('#b005-console .b005-log-line[data-severity="err"],#b005-console .b005-log-line[data-severity="error"]')) document.getElementById('audit-console-details')?.setAttribute('open','');
+        renderFindingsList();
       }
       const btn=document.getElementById('visual-editor-audit-toggle');if(btn)btn.setAttribute('aria-expanded',String(open));
       const mobileBtn=document.getElementById('visual-editor-mobile-audit');if(mobileBtn)mobileBtn.setAttribute('aria-expanded',String(open));
@@ -24744,7 +24761,7 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
       const verdict = document.getElementById('health-verdict');
       const sub = document.getElementById('health-subtext');
       if (gauge) {
-        gauge.textContent = hasProject && score != null ? Math.max(0, Math.min(100, Math.round(score))) + '/100' + (v.notVerified ? ' partial' : '') : '—';
+        gauge.textContent = hasProject && score != null ? Math.max(0, Math.min(100, Math.round(score))) + '/100' : 'Not scored';
         gauge.setAttribute('aria-label', hasProject && score != null ? 'Project score ' + Math.round(score) + ' out of 100' : 'Project score unavailable until a check completes');
         gauge.classList.remove('score-good','score-warn','score-bad');
         if(hasProject && score != null) gauge.classList.add(score < 60 ? 'score-bad' : score < 85 ? 'score-warn' : 'score-good');
@@ -25275,6 +25292,19 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
         addFinding(testId,'runtime',{ id:`runtime-${findings.length}`, category:'Runtime', severity:'high', title:err.kind === 'promise' ? 'Unhandled Promise rejection observed':'Runtime exception observed', file:err.file || STATE.entryFile || 'preview', desc:'The browser directly observed this error while the isolated project preview was running.', evidence:`${err.message}${err.line ? ` at line ${err.line}${err.col ? ':'+err.col:''}`:''}${Number(err.count||1) > 1 ? ` ×${Number(err.count)}` : ''}`, fix:'Correct the runtime cause, reload the preview, and verify that the exception no longer occurs.' });
       });
 
+      if (!(STATE.runtimeErrors || []).length) {
+        const previewErrors=(STATE.consoleLogs || []).filter(item =>
+          (item.level==='err' || item.level==='error') && /(?:\[REACT\]|preview|compil|module|dependency|missing file|syntax error)/i.test(item.message || '')
+        ).slice(-5);
+        previewErrors.forEach(item => addFinding('runtime-exception','runtime',{
+          id:'preview-'+findings.length,category:'React preview',severity:'high',
+          title:'React preview error',file:STATE.entryFile||'preview',
+          desc:'Debooger recorded this error while preparing or running the project.',
+          evidence:String(item.message||''),
+          fix:'Inspect the named module and error. Repair the viewer loader if source imports are valid; provide missing assets or a compiled build only where genuinely required.'
+        }));
+      }
+
       // Score is the pass rate of tests that actually finished. Skipped and unfinished tests do not count.
       // Do not call a test "passed" when that test did not apply to this project.
       const htmlEntries = textEntries.filter(([path]) => /\.html?$/i.test(path));
@@ -25348,7 +25378,7 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
       renderFileScores();
       renderFindingsList();
       const consoleDetails = document.getElementById('audit-console-details');
-      if (consoleDetails && (verification.errors > 0 || (STATE.consoleLogs || []).some(l => l.level === 'err' || l.level === 'error'))) consoleDetails.open = true;
+      if (consoleDetails) consoleDetails.open = false;
     }
 
     let b006AuditFilter = 'all';
@@ -25357,7 +25387,7 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
       const errors = auditConsoleTarget.querySelectorAll('.b005-log-line[data-severity="err"],.b005-log-line[data-severity="error"]');
       const badge = document.getElementById('audit-console-count');
       if (badge) badge.textContent = errors.length ? ' · ' + errors.length + ' error' + (errors.length === 1 ? '' : 's') : '';
-      if (errors.length) document.getElementById('audit-console-details')?.setAttribute('open','');
+      // Errors remain visible in the issue list; the console opens only on user click.
     }).observe(auditConsoleTarget,{childList:true,subtree:true});
 
     function b006SetAuditFilter(filter) {
@@ -25377,9 +25407,9 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
         <div class="b006-finding-body"><p><strong>Where:</strong> ${escapeHtml(locationText)}</p><p><strong>Next step:</strong> ${escapeHtml(f.fix || 'Review this finding and verify before applying a correction.')}</p>
         ${f.evidence ? '<details class="b006-evidence"><summary>Evidence</summary><pre>'+escapeHtml(String(f.evidence))+'</pre></details>' : ''}
         ${f.rootCause ? '<p><strong>Cause:</strong> '+escapeHtml(String(f.rootCause))+'</p>' : ''}</div>`;
-      card.open = tone === 'error';
+      card.open = true;
       const evidence = card.querySelector('.b006-evidence');
-      if (evidence && tone === 'error') evidence.open = true;
+      if (evidence) evidence.open = true;
       return card;
     }
     function renderFindingsList() {
@@ -25401,8 +25431,6 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
       }
       groups.forEach(([kind, findings, name]) => {
         if (!findings.length) return;
-        const heading=document.createElement('div');heading.className='b006-findings-section';heading.dataset.auditKind=kind;
-        heading.textContent=name+' · '+findingOccurrenceCount(findings);list.appendChild(heading);
         findings.forEach(f=>list.appendChild(renderFindingCard(f,kind)));
       });
       b006SetAuditFilter(b006AuditFilter);
@@ -27624,7 +27652,7 @@ function b005ClearConsole(){STATE.consoleLogs=[];b005RenderConsole();}
         ['AI chat',!!document.getElementById('d2-ai-chat')],
         ['GitHub Publish',!!document.getElementById('b005-pages-modal')],
         ['React entry detection',typeof detectProjectType==='function'],
-        ['Version storage isolation',D2_STORAGE_SCOPE.includes('DB2K-001') && WORKSPACE_DB_NAME.startsWith(D2_STORAGE_SCOPE)],
+        ['Version storage isolation',D2_STORAGE_SCOPE.includes('DB2K-002') && WORKSPACE_DB_NAME.startsWith(D2_STORAGE_SCOPE)],
         ['Paste selection wiring',document.querySelectorAll('#modal-paste-code [data-paste-format]').length===5]
       ];
       try {
@@ -27648,8 +27676,8 @@ function b005ClearConsole(){STATE.consoleLogs=[];b005RenderConsole();}
 
 /* D2 engine load marker */
 window.D2_ENGINE_READY = true;
-window.D2_ENGINE_VERSION = 'DB2K-001';
-try { window.dispatchEvent(new CustomEvent('d2-engine-ready', { detail: { version: 'DB2K-001' } })); } catch (_) {}
+window.D2_ENGINE_VERSION = 'DB2K-002';
+try { window.dispatchEvent(new CustomEvent('d2-engine-ready', { detail: { version: 'DB2K-002' } })); } catch (_) {}
 
 </script>
 <dialog id="d2-ai-chat" aria-label="AI Chat and provider setup">
@@ -28398,7 +28426,7 @@ load();
       const cleanupRow=b012El('db2k-clean-row');if(cleanupRow)cleanupRow.hidden=mode!=='viewer';
       const renameArea=b012El('b030-publish-rename');
       if(renameArea)renameArea.hidden=mode!=='archive'||!B030_UPLOAD_NAMES.length;
-      if (mode === 'viewer') return 'Publishes the complete DEBOOGER DB2K-001 application as root index.html. Public URL follows the selected repository.';
+      if (mode === 'viewer') return 'Publishes the complete DEBOOGER DB2K-002 application as root index.html. Public URL follows the selected repository.';
       if (mode === 'archive') {
         const selection = [...(b012El('b026-publish-files')?.files || [])];
         const changes=[...B030_UPLOAD_RENAMES].filter(([id,target])=>B030_UPLOAD_NAMES.some(n=>n.id===id && n.name!==target));
@@ -28417,7 +28445,7 @@ load();
         // The entire self-contained Debooger application IS the index file.
         // Publish the pristine startup template, never the mutable runtime DOM.
         const html = D2_PUBLISH_SOURCE_HTML;
-        if (!html || !html.includes('DEBOOGER2000') || !html.includes('DB2K-001')) throw new Error('Could not prepare DEBOOGER DB2K-001 for upload.');
+        if (!html || !html.includes('DEBOOGER2000') || !html.includes('DB2K-002')) throw new Error('Could not prepare DEBOOGER DB2K-002 for upload.');
         if (/(?:github_pat_|ghp_)[A-Za-z0-9_]{24,}/.test(html)) throw new Error('Possible embedded GitHub token found; publishing was blocked.');
         return { entries:[{path:'index.html',content:b005ToBase64(html)}], omitted:0, rewritten:false };
       }
@@ -28592,7 +28620,7 @@ load();
       await Promise.all(Array.from({ length:files.some(file=>file.getContent)?1:Math.min(5, files.length) }, worker));
       const tree = await b012GithubApi(root + '/git/trees', { method:'POST', body:{ base_tree:commit.tree.sha, tree:[...blobs,...deletions] } });
       if (!tree?.sha) throw new Error('GitHub did not confirm the new file tree.');
-      const created = await b012GithubApi(root + '/git/commits', { method:'POST', body:{ message:'Publish website from DEBOOGER2000 DB2K-001', tree:tree.sha, parents:[ref.object.sha] } });
+      const created = await b012GithubApi(root + '/git/commits', { method:'POST', body:{ message:'Publish website from DEBOOGER2000 DB2K-002', tree:tree.sha, parents:[ref.object.sha] } });
       if (!created?.sha) throw new Error('GitHub did not confirm the commit.');
       await b012GithubApi(root + '/git/refs/heads/main', {method:'PATCH', body:{sha:created.sha,force:false} });
       const verified = await b012GithubApi(root + '/git/ref/heads/main');
