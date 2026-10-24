@@ -1057,7 +1057,7 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
 .workspace-pane-right .findings-container{padding:8px 18px 14px!important;gap:0!important}.workspace-pane-right .b006-findings-section{padding:14px 0 7px!important;font-size:12px!important;border-bottom:1px solid #edf1f5}
 .workspace-pane-right .finding-card{position:relative;border:0!important;border-bottom:1px solid #edf1f5!important;border-radius:0!important;box-shadow:none!important;background:#fff!important}.workspace-pane-right .finding-card:before{content:"";position:absolute;top:10px;bottom:10px;left:0;width:3px;border-radius:3px;background:#d69b39}.workspace-pane-right .finding-card.audit-high:before{background:#d64e4e}.workspace-pane-right .finding-card.audit-low:before{background:#188d6b}.workspace-pane-right .finding-card.audit-review:before{background:#94a3b8}.workspace-pane-right .finding-card .b006-finding-head{padding:12px 12px 12px 15px!important;gap:12px!important}.workspace-pane-right .b006-finding-title{font-size:12px!important;font-weight:600!important}.workspace-pane-right .b006-finding-severity{font-size:11px!important;font-weight:600!important}.workspace-pane-right .audit-high .b006-finding-severity{color:#ba3333}.workspace-pane-right .audit-medium .b006-finding-severity{color:#a77219}.workspace-pane-right .audit-low .b006-finding-severity{color:#16805f}.workspace-pane-right .audit-review .b006-finding-severity{color:#64748b}
 .workspace-pane-right .b006-finding-body{padding:1px 15px 13px!important;border-top:0!important}
-.workspace-pane-right .b005-diagnostics,.workspace-pane-right .audit-fold{margin:4px 18px 8px!important;border:1px solid #e1e7ee!important;border-radius:7px!important;background:#fff!important;color:#334155!important;font-size:12px!important;overflow:hidden}.workspace-pane-right .b005-diagnostics>summary,.workspace-pane-right .audit-fold>summary{padding:11px 12px!important;list-style:none!important;cursor:pointer!important;font-size:12px!important;font-weight:600!important}.workspace-pane-right .audit-fold>summary::-webkit-details-marker{display:none}.workspace-pane-right .audit-method-body{padding:4px 12px 12px;font-size:12px;line-height:1.55;color:#64748b}.workspace-pane-right .upload-debug-box{margin:0!important;border:0!important;border-top:1px solid #edf1f5!important;background:#fff!important}.workspace-pane-right .audit-quick-actions{margin-top:10px!important;border-top:1px solid #edf1f5!important}.workspace-pane-right .b005-diagnostics:has(.b005-log-line[data-severity="err"],.b005-log-line[data-severity="error"]){border-left:3px solid #d64e4e!important}
+.workspace-pane-right .b005-diagnostics,.workspace-pane-right .audit-fold{margin:0 18px!important;border:0!important;border-bottom:1px solid #e8edf2!important;border-radius:0!important;background:#fff!important;color:#334155!important;font-size:12px!important;overflow:hidden}.workspace-pane-right .b005-diagnostics>summary,.workspace-pane-right .audit-fold>summary{padding:11px 12px!important;list-style:none!important;cursor:pointer!important;font-size:12px!important;font-weight:600!important}.workspace-pane-right .audit-fold>summary::-webkit-details-marker{display:none}.workspace-pane-right .audit-method-body{padding:4px 12px 12px;font-size:12px;line-height:1.55;color:#64748b}.workspace-pane-right .upload-debug-box{margin:0!important;border:0!important;border-top:1px solid #edf1f5!important;background:#fff!important}.workspace-pane-right .audit-quick-actions{margin-top:10px!important;border-top:1px solid #edf1f5!important}.workspace-pane-right .b005-diagnostics:has(.b005-log-line[data-severity="err"],.b005-log-line[data-severity="error"]){border-left:3px solid #d64e4e!important}
 
 /* Mobile text fields must be >=16px to avoid involuntary Safari page zoom. */
 @media (max-width:900px){
@@ -1083,6 +1083,10 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
 #workspace-more-menu .d2-file-navigation-label{display:block!important;font-size:12px;font-weight:600;color:#64748b}
 #workspace-more-menu #d2-active-html{display:block!important;width:100%;max-width:100%!important;height:38px;font-size:13px;border:1px solid #d5dfea;border-radius:6px;color:#243447;padding:0 9px}
 .mobile-preview-controls .db2k-preview-trash{display:inline-flex;align-items:center;justify-content:center;width:40px;min-width:40px;min-height:38px;padding:6px!important;color:#475569;background:#fff;border:1px solid #d9e2ee;border-radius:7px}
+#workspace-more-menu .db2k-tools-files{display:grid;gap:8px;grid-column:1/-1}
+#workspace-more-menu .db2k-file-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+#workspace-more-menu .db2k-file-actions button{min-height:34px;border:1px solid #dce3eb;background:#fff;color:#334155;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+body.workspace-view-active .header-actions #btn-top-trash{display:inline-flex!important;align-items:center;justify-content:center}
 </style>
 <style id="db2k-002-audit">
 .workspace-pane-right #findings-list{display:flex;flex-direction:column;gap:0!important;padding:0 16px 16px!important;background:#fff}
@@ -1150,13 +1154,17 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         <details class="more-tools-section" id="more-tools-details">
           <summary>Tools <span>Project, build, compare and AI</span></summary>
           <div class="more-tools-list">
-            <div class="db2k-tools-files"><div id="d2-file-navigation" class="d2-file-navigation" hidden aria-label="Project navigation">
-  <label class="d2-file-navigation-label" for="d2-active-html">Switch HTML page</label>
-  <select id="d2-active-html" aria-label="Preview HTML entry" title="Choose HTML page"><option value="">Current page</option></select>
-<span id="d2-current-filename" title="Active project file" aria-live="polite"></span>
-</div></div>
-            <button type="button" onclick="openFilesSheet()">Project files</button>
-            <button type="button" onclick="triggerOpenMenu();closeWorkspacePopovers()">Add files</button>
+            <div class="db2k-tools-files" aria-label="Files manager">
+              <div id="d2-file-navigation" class="d2-file-navigation" hidden aria-label="Project file navigation">
+                <label class="d2-file-navigation-label" for="d2-active-html">Open HTML page</label>
+                <select id="d2-active-html" aria-label="Preview HTML entry" title="Choose HTML page"><option value="">Current page</option></select>
+                <span id="d2-current-filename" title="Active project file" aria-live="polite"></span>
+              </div>
+              <div class="db2k-file-actions">
+                <button type="button" onclick="openFilesSheet()">Manage files</button>
+                <button type="button" onclick="triggerOpenMenu();closeWorkspacePopovers()">Add files</button>
+              </div>
+            </div>
             <button type="button" onclick="openSelectedFileEditor();closeWorkspacePopovers()">Edit source</button>
             <button type="button" onclick="promptRenameSelectedFile();closeWorkspacePopovers()">Rename file</button>
             <button type="button" onclick="promptRenameActiveProject();closeWorkspacePopovers()">Rename project</button>
@@ -1183,7 +1191,7 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
         <div class="workspace-correction-list" id="workspace-correction-list"></div>
       </div>
       <div class="header-actions" id="header-actions">
-        <button type="button" class="workspace-icon-btn project-only-action workspace-delete-btn" id="btn-top-trash" onclick="clearLoadedProject()" title="Delete loaded project" aria-label="Delete loaded project"><svg class="top-trash-icon" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v7M14 11v7"/></svg></button>
+        <button type="button" class="workspace-icon-btn project-only-action workspace-delete-btn" id="btn-top-trash" onclick="deleteSelectedProjectFile()" title="Delete selected preview file" aria-label="Delete selected preview file"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m5 4v7m4-7v7"/></svg></button>
         <button type="button" class="workspace-icon-btn global-settings-btn" id="global-settings-btn" onclick="openSettingsOverlay()" title="Settings" aria-label="Open settings"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.6h3l.6 2.2c.57.17 1.1.39 1.6.68l1.98-1.1 2.12 2.12-1.1 1.98c.29.5.51 1.03.68 1.6l2.22.62v3l-2.22.62c-.17.57-.39 1.1-.68 1.6l1.1 1.98-2.12 2.12-1.98-1.1c-.5.29-1.03.51-1.6.68l-.6 2.2h-3l-.6-2.2c-.57-.17-1.1-.39-1.6-.68l-1.98 1.1-2.12-2.12 1.1-1.98c-.29-.5-.51-1.03-.68-1.6L2.4 13.5v-3l2.22-.62c.17-.57.39-1.1.68-1.6L4.2 6.3l2.12-2.12 1.98 1.1c.5-.29 1.03-.51 1.6-.68l.6-2Z"/><circle cx="12" cy="12" r="3.15"/></svg></button>
         <input type="file" id="file-input-folder" aria-label="Choose project folder" webkitdirectory directory multiple style="display:none;" />
       </div>
@@ -1243,10 +1251,10 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
 
       <!-- Center: Live Sandbox Viewer -->
       <div class="workspace-pane-center">
-        <div class="mobile-preview-controls" data-project-action aria-label="Preview actions">
+        <div class="mobile-preview-controls" aria-label="Preview actions">
           <span class="mobile-viewer-title" id="mobile-viewer-title">Preview</span>
           <button type="button" onclick="openPreviewInBrowser()" aria-label="Open preview in browser">Browser</button>
-          <button type="button" class="db2k-preview-trash" onclick="deleteSelectedProjectFile()" aria-label="Delete selected preview file" title="Delete selected file"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l.8 13h8.4L17 7M10 11v6M14 11v6"/></svg></button>
+          <button type="button" class="db2k-preview-trash" onclick="deleteSelectedProjectFile()" aria-label="Delete selected preview file" title="Delete selected file"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m5 4v7m4-7v7"/></svg></button>
 
         </div>
         <!-- Render Stage -->
@@ -1310,7 +1318,7 @@ body.project-valid .audit-nav-count{display:inline-flex}.audit-nav-count.audit-g
           </div>
           <div class="findings-container" id="findings-list"><p class="b006-audit-empty">No issues found yet.</p></div>
           <details class="b005-diagnostics" id="audit-console-details"><summary>Console &amp; runtime evidence <span id="audit-console-count"></span></summary><div class="b005-console-actions"><button type="button" onclick="b005CopyConsole()">Copy evidence</button><button type="button" onclick="b005ClearConsole()">Clear</button></div><div id="b005-console" aria-live="polite">No console evidence collected yet.</div></details>
-          <details class="db2k-audit-more"><summary>Additional audit details</summary><div class="db2k-audit-more-body"><details class="score-method audit-fold"><summary>Score method &amp; file scores</summary><div class="audit-method-body">Score uses verified completed checks only. Passed ÷ completed checks × 100, less confirmed finding penalties (high 12, medium 5, low 2 per occurrence). Unverified and unavailable checks are not passes. File scores start at 100 with confirmed severity deductions (high 30, medium 15, low 7 per occurrence). A score is not a guarantee of quality.<div id="file-scores-list"></div></div></details>
+          <details class="db2k-audit-more" open><summary>Audit details</summary><div class="db2k-audit-more-body"><details class="score-method audit-fold" open><summary>Score method &amp; file scores</summary><div class="audit-method-body">Score uses verified completed checks only. Passed ÷ completed checks × 100, less confirmed finding penalties (high 12, medium 5, low 2 per occurrence). Unverified and unavailable checks are not passes. File scores start at 100 with confirmed severity deductions (high 30, medium 15, low 7 per occurrence). A score is not a guarantee of quality.<div id="file-scores-list"></div></div></details>
           <details class="audit-fold" id="upload-notes-details"><summary>Upload &amp; preview notes</summary><div id="upload-debug-box" class="upload-debug-box" hidden></div></details>
           <details class="audit-fold"><summary>Selected element details</summary><div id="visual-inspector-details"></div><div id="visual-source-hint"></div></details>
           </div></details>
@@ -19708,7 +19716,7 @@ codePos,
 
     function setMobileWorkspaceScreen(screen, options = {}) {
       if (!['preview','results'].includes(screen)) screen = 'preview';
-      if (!projectIsValid() && STATE.projectStatus !== 'restored') {
+      if (!projectIsValid() && STATE.projectStatus !== 'restored' && !Object.keys(STATE.files || {}).length && !(STATE.consoleLogs || []).length) {
         STATE.mobileWorkspaceScreen = 'preview';
         if (!options.skipSave) switchView('view-home');
         return;
@@ -19734,7 +19742,7 @@ codePos,
     }
 
     function openFilesSheet() {
-      if (!projectIsValid() && STATE.projectStatus !== 'restored') return;
+      if (!Object.keys(STATE.files || {}).length) { showToast('No files loaded.'); return; }
       closeWorkspacePopovers();
       document.body.classList.add('files-sheet-open');
       const pane = document.querySelector('.workspace-pane-left');
@@ -19962,7 +19970,7 @@ codePos,
           const dx = e.touches[0].clientX - lastX;
           const dy = e.touches[0].clientY - lastY;
           const frame = document.getElementById('live-sandbox-frame');
-          if (frame && STATE.previewUserScale <= 1.01 && Math.abs(dy) >= Math.abs(dx)) {
+          if (frame && Math.abs(dy) >= Math.abs(dx)) {
             const rect=frame.getBoundingClientRect();
             if(rect.width>1 && rect.height>1){
               const x=(e.touches[0].clientX-rect.left)*frame.offsetWidth/rect.width;
@@ -20001,7 +20009,7 @@ codePos,
       toggleVisualInspectMode();
     }
     function openAuditFromNav() {
-      if (!Object.keys(STATE.files || {}).length) { showToast('Upload a project to inspect its audit.'); return; }
+      if (!Object.keys(STATE.files || {}).length && !(STATE.consoleLogs || []).length) { showToast('Upload a project to inspect its audit.'); return; }
       if (STATE.activeView !== 'view-workspace') switchView('view-workspace');
       reRunAudit();
       toggleCombinedAudit();
@@ -20035,7 +20043,7 @@ codePos,
     })();
 
     function switchView(viewId) {
-      if (viewId === 'view-workspace' && !projectIsValid() && STATE.projectStatus !== 'restored' && !(STATE.projectStatus === 'loading' && STATE.entryFile && STATE.files?.[STATE.entryFile])) viewId = 'view-home';
+      if (viewId === 'view-workspace' && !projectIsValid() && STATE.projectStatus !== 'restored' && !Object.keys(STATE.files || {}).length && !(STATE.consoleLogs || []).length) viewId = 'view-home';
       STATE.activeView = viewId;
       scheduleWorkspaceSave(500);
       document.querySelectorAll('[data-desktop-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.desktopView===viewId));
@@ -25393,7 +25401,7 @@ ${issues.length ? issues.map(visualIssueToPrompt).join('\n\n---\n\n') : 'No visu
     function b006SetAuditFilter(filter) {
       b006AuditFilter = ['all','error','visual','cleanup'].includes(filter) ? filter : 'all';
       document.querySelectorAll('[data-audit-filter]').forEach(btn => btn.classList.toggle('active', btn.dataset.auditFilter === b006AuditFilter));
-      document.querySelectorAll('#findings-list [data-audit-kind]').forEach(row => { row.hidden = b006AuditFilter !== 'all' && row.dataset.auditKind !== b006AuditFilter; });
+      document.querySelectorAll('#findings-list [data-audit-kind]').forEach(row => { row.hidden = b006AuditFilter !== 'all' && row.dataset.auditKind !== b006AuditFilter; if (!row.hidden && row.tagName === 'DETAILS') { row.open = true; row.querySelectorAll('details.b006-evidence').forEach(e => { e.open = true; }); } });
     }
     function renderFindingCard(f, tone) {
       const card = document.createElement('details');
