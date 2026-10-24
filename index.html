@@ -641,7 +641,7 @@ header{height:60px!important;background:rgba(255,255,255,.94)!important;border-b
 
 .d2-file-navigation{display:flex;align-items:center;border-bottom:1px solid #e2e8f0;font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#334155;min-width:0;flex:0 0 auto;}
 .d2-file-navigation[hidden]{display:none!important}.d2-file-navigation-label{font-size:12px;font-weight:600;white-space:nowrap}.d2-file-navigation select,.d2-file-navigation input{min-width:0;max-width:260px;height:29px;border:1px solid #dce3ec;background:white;color:#334155;padding:2px 7px;border-radius:4px;font-size:12px}.d2-file-navigation select{max-width:220px}.d2-file-navigation button{border:1px solid #dce3ec;background:#fff;color:#334155;padding:3px 10px;height:29px;min-height:29px;border-radius:4px;font-size:12px;cursor:pointer}.d2-file-navigation #d2-current-filename{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:60px;flex:1}
-@media(max-width:900px){.d2-file-navigation{height:36px;}.d2-file-navigation-label,.d2-file-navigation #d2-current-filename,.d2-file-navigation #d2-file-search,.d2-file-navigation #d2-file-results,.d2-file-navigation #d2-open-file{display:none}.d2-file-navigation #d2-active-html{max-width:100%;width:100%;height:28px;font-size:12px}body.workspace-view-active:not(.mobile-landscape-preview):not(.panoramic-preview) .d2-file-navigation{position:fixed;top:52px;left:0;right:0;z-index:5200}body.workspace-view-active:not(.mobile-landscape-preview):not(.panoramic-preview) .view-fullscreen-flex.active{top:88px!important}body.workspace-view-active:not(.mobile-landscape-preview):not(.panoramic-preview) .main-viewport{padding-top:88px!important}}
+@media(max-width:900px){.d2-file-navigation{height:36px;}.d2-file-navigation-label,.d2-file-navigation #d2-current-filename,.d2-file-navigation #d2-file-search,.d2-file-navigation #d2-file-results,.d2-file-navigation #d2-open-file{display:none}.d2-file-navigation #d2-active-html{max-width:100%;width:100%;height:28px;font-size:12px}body.workspace-view-active:not(.mobile-landscape-preview):not(.panoramic-preview) .view-fullscreen-flex.active{top:52px!important}body.workspace-view-active:not(.mobile-landscape-preview):not(.panoramic-preview) .main-viewport{padding-top:52px!important}}
 
 
 /* Only additions; the v31 classic desktop styling remains intact. */
@@ -1074,6 +1074,8 @@ body.workspace-view-active .topbar-logo{display:flex!important}
 .workspace-pane-right .audit-quick-actions{margin-top:8px!important;border-top:1px solid #edf1f5!important}
 .workspace-pane-right .b005-diagnostics:has(.b005-log-line[data-severity="err"],.b005-log-line[data-severity="error"]){border-left:0!important}
 .workspace-pane-right #b005-console{max-height:260px!important;min-height:0!important}
+@media(min-width:901px){.d2-mobile-preview-trash{display:none!important}}
+@media(max-width:900px){.d2-mobile-preview-trash{display:inline-grid!important;place-items:center;flex:0 0 32px!important;min-width:32px;height:32px!important;padding:0!important;border:0!important;background:transparent!important;color:#ab3540!important}}
 /* Mobile text fields must be >=16px to avoid involuntary Safari page zoom. */
 @media (max-width:900px){
   .workspace-pane-left input[type=text], .workspace-pane-left input[type=search],
@@ -1142,7 +1144,7 @@ body.workspace-view-active .topbar-logo{display:flex!important}
         <details class="more-tools-section" id="more-tools-details">
           <summary>Tools <span>Project, build, compare and AI</span></summary>
           <div class="more-tools-list">
-            <button type="button" onclick="toggleWorkspaceDrawer('files');closeWorkspacePopovers()">Project files</button>
+            <button type="button" onclick="toggleWorkspaceDrawer('files');closeWorkspacePopovers()">Files</button>
             <button type="button" onclick="triggerOpenMenu();closeWorkspacePopovers()">Add files</button>
             <button type="button" onclick="openSelectedFileEditor();closeWorkspacePopovers()">Edit source</button>
             <button type="button" onclick="promptRenameSelectedFile();closeWorkspacePopovers()">Rename file</button>
@@ -1204,16 +1206,6 @@ body.workspace-view-active .topbar-logo{display:flex!important}
         </div>
 </div>
     </section>
-<div id="d2-file-navigation" class="d2-file-navigation" hidden aria-label="Project navigation">
-  <label class="d2-file-navigation-label" for="d2-active-html">Page</label>
-  <select id="d2-active-html" aria-label="Preview HTML entry" title="Choose HTML page"><option value="">Current page</option></select>
-  <details class="d2-file-finder"><summary>Find file</summary>
-    <input id="d2-file-search" type="search" placeholder="Search files" aria-label="Search project files" autocomplete="off">
-    <select id="d2-file-results" aria-label="Matching project files"><option value="">Select file</option></select>
-    <button type="button" id="d2-open-file" onclick="d2OpenSelectedFile()">Open</button>
-  </details>
-  <span id="d2-current-filename" title="Active project file" aria-live="polite"></span><button type="button" id="d2-preview-delete" onclick="clearLoadedProject()" aria-label="Delete loaded project" title="Delete loaded project"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 4h4l1 3H9l1-3ZM7 7l1 13h8l1-13M10 11v6m4-6v6"/></svg></button>
-</div>
 <section class="view-fullscreen-flex" id="view-workspace">
       <!-- Left: File Browser -->
       <div class="workspace-pane-left">
@@ -1243,7 +1235,7 @@ body.workspace-view-active .topbar-logo{display:flex!important}
         <div class="mobile-preview-controls" data-project-action aria-label="Preview actions">
           <span class="mobile-viewer-title" id="mobile-viewer-title">Preview</span>
           <button type="button" onclick="openPreviewInBrowser()" aria-label="Open preview in browser">Browser</button>
-          <button type="button" onclick="openFilesSheet()" aria-label="Open project files">Files</button>
+          <button type="button" class="d2-mobile-preview-trash" onclick="clearLoadedProject()" aria-label="Delete loaded project" title="Delete loaded project"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 4h4l1 3H9l1-3ZM7 7l1 13h8l1-13M10 11v6m4-6v6"/></svg></button>
 
         </div>
         <!-- Render Stage -->
@@ -26584,57 +26576,6 @@ Use saved source hints only when marked exact or verified. If a marker has no sa
 
     // File Tree & Code Editor
 
-    function d2RefreshFileNavigation() {
-      const root = document.getElementById('d2-file-navigation');
-      if (!root) return;
-      const keys = Object.keys(STATE.files || {}).sort();
-      root.hidden = !keys.length;
-      if (!keys.length) return;
-      const entry = document.getElementById('d2-active-html');
-      const current = STATE.entryFile || '';
-      const available = keys.filter(k => /\.html?$/i.test(k));
-      const signature = available.join('\n');
-      if (entry.dataset.signature !== signature) {
-        entry.replaceChildren(new Option('Select HTML page', ''));
-        available.forEach(k => entry.add(new Option(k, k)));
-        entry.dataset.signature = signature;
-      }
-      entry.value = available.includes(current) ? current : '';
-      document.getElementById('d2-current-filename').textContent = STATE.selectedFile || current || STATE.projectName || 'Project';
-      d2RefreshFileSearch();
-    }
-    function d2RefreshFileSearch() {
-      const target = document.getElementById('d2-file-results');
-      if (!target) return;
-      const q = String(document.getElementById('d2-file-search')?.value || '').trim().toLowerCase();
-      const keys = Object.keys(STATE.files || {}).filter(k=>k.toLowerCase().includes(q)).sort();
-      const old = target.value;
-      target.replaceChildren(new Option(keys.length ? 'Select project file' : 'No matching files',''));
-      keys.slice(0,250).forEach(k=>target.add(new Option(k,k)));
-      if (keys.includes(old)) target.value = old;
-    }
-    function d2OpenSelectedFile() {
-      const path = document.getElementById('d2-file-results')?.value;
-      if (!path || !STATE.files[path]) return;
-      STATE.selectedFile = path;
-      if (/\.html?$/i.test(path)) {
-        STATE.entryFile = path;
-        buildSandboxLiveViewer();
-      } else {
-        const file = STATE.files[path];
-        if (!file.binary) openSelectedFileEditor();
-        else showToast('Binary file selected; download it from Files.');
-      }
-      renderFileTree(); d2RefreshFileNavigation();
-    }
-    document.getElementById('d2-file-search')?.addEventListener('input',d2RefreshFileSearch);
-    document.getElementById('d2-active-html')?.addEventListener('change',event => {
-      const path = event.target.value;
-      if (!path || !STATE.files[path]) return;
-      STATE.entryFile=path; STATE.selectedFile=path;
-      buildSandboxLiveViewer(); renderFileTree();d2RefreshFileNavigation();
-    });
-
     function renderFileTree() {
       const container = document.getElementById('file-tree-container');
       const countBadge = document.getElementById('workspace-file-count');
@@ -26685,7 +26626,15 @@ Use saved source hints only when marked exact or verified. If a marker has no sa
         download.title = 'Download ' + item.path;
         download.textContent = '⬇️';
         download.addEventListener('click', (event) => { event.stopPropagation(); downloadIndividualFile(item.path); });
-        node.addEventListener('click', () => { STATE.selectedFile = item.path; renderFileTree(); });
+        node.addEventListener('click', () => {
+          STATE.selectedFile = item.path;
+          if (/\.html?$/i.test(item.path) && !f.binary) {
+            STATE.entryFile = item.path;
+            buildSandboxLiveViewer();
+            if (window.matchMedia('(max-width:900px)').matches) closeFilesSheet();
+          }
+          renderFileTree();
+        });
         node.append(icon, name, size, download);
         return node;
       };
@@ -26720,7 +26669,7 @@ Use saved source hints only when marked exact or verified. If a marker has no sa
       Object.keys(root.dirs).sort().forEach(k => container.appendChild(makeFolder(k, root.dirs[k], 0)));
       root.files.sort((a,b) => a.name.localeCompare(b.name)).forEach(f => container.appendChild(makeFileRow(f)));
       setupHoverScrollbars();
-      d2RefreshFileNavigation();
+      
     }
 
     function filterFileTree(query) {
